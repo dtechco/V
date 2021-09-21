@@ -1,0 +1,301 @@
+‘拆分表格到多个表格
+
+’拆分表格到多个文件（每个文件单一表格）
+
+
+
+
+
+
+'**************************工作簿
+
+‘**************************工作表
+'@功能:工作簿是否存在某表名的工作表
+'@返回值：true false
+Function IsSheetExist(ByVal wb As Workbook, ByVal shtname As String)
+    Dim d
+    Set d = CreateObject("Scripting.Dictionary")
+    For Each sh In wb.Sheets
+       d(sh.Name) = ""
+    Next
+    If d.exists(shtname) Then
+         IsSheetExist= True
+    Else
+        IsSheetExist= False
+    End If
+    Set d = Nothing
+End Function
+
+‘**************************Range对象
+
+‘**************************Chart对象
+
+‘**************************Shape对象
+
+‘**************************数据输入
+
+'**************************菜单和工具栏
+
+'**************************Ribbon功能区
+
+'**************************控件
+
+‘**************************'窗体
+
+'**************************目录和文件操作
+'@功能:判断文件夹或者文件是否存在
+'@AUTHOR: 
+'@DIM:
+'@EXAMPLE: 
+'@注意：strPathName="C:\abcd"和“C:\abcd\”都可以
+Function IsPathExists(ByVal strPath As String) As Boolean
+    If Dir(strPath, 16) <> Empty Then
+        IsPathExists= True
+    Else
+        IsPathExists= False
+    End If
+End Function
+
+'@功能:获取某文件夹下的文件列表，可用字符串过滤
+'@AUTHOR: 
+'@DIM:
+'@EXAMPLE: 
+'@注意：只返回文件，不返回子文件夹。
+'@返回值：返回""或者返回数组
+ Function GetFileList(ByVal strDirPath As String, Optional strFilter As String) As Variant
+' 将文件列表放到数组
+    Dim f As String
+    Dim i As Long
+    Dim FileList() As String
+
+    If strFilter = "" Then strFilter = "*.*"
+        Select Case Right(strDirPath , 1)
+            Case "", "/"
+            strPath = Left(strPath, Len(strDirPath ) - 1)
+    End Select
+
+    ReDim Preserve FileList(0)
+    f = Dir(strDirPath & "/" & strFilter)
+    Do While Len(f) > 0
+       ReDim Preserve FileList(i) As String
+       FileList(i) = f
+       i = i + 1
+       f = Dir()
+    Loop
+    If FileList(0) <> Empty Then
+       GetFileList= FileList
+    Else
+       GetFileList= ""
+    End If
+End Function
+
+TODO
+'@功能:获取某文件夹下的文件列表，可用array过滤格式名
+
+
+
+
+
+
+'@功能：判断文件夹是否存在，不存在则创建
+Sub CheckAndCreateDir(byval dirPath as string)
+ if IsPathExists(dirPath )=false then
+
+else
+MkDir dirPath 
+endif
+
+end sub
+
+'@功能：'删掉文件夹再创建
+FSO.GetFolder(pathG).Delete
+MkDir pathG
+
+
+'通过文件路径获取文件名
+Function GetFileName(strFilePath As String) As String
+    Dim strFileName As String
+    GetFileName = ""
+    If InStr(1, strFilePath, "\") > 0 Then
+        strFileName = Split(strFilePath, "\")(UBound(Split(strFilePath, "\")))
+        GetFileName = strFileName
+    ElseIf InStr(1, strFilePath, "/") > 0 Then
+        strFileName = Split(strFilePath, "/")(UBound(Split(strFilePath, "/")))
+        GetFileName = strFileName
+    End If
+End Function
+
+
+’弹窗选择文件夹
+
+
+‘弹窗选择单个文件
+
+
+’弹窗选择多个文件
+
+
+’‘**************************文件的输入输出
+
+
+‘‘**************************数据库
+
+
+’‘**************************Internet
+
+
+‘‘**************************XML
+
+
+
+’‘**************************数组与字典
+数组countUnique
+https://github.com/x-vba/xlib/blob/master/Modules/xlibArray.bas
+
+
+数组排序（下面这个代码会多一个空值，数组多一个element）
+https://github.com/x-vba/xlib/blob/master/Modules/xlibArray.bas
+
+数组反转
+https://github.com/x-vba/xlib/blob/master/Modules/xlibArray.bas
+
+
+‘‘**************************代码优化与高效编程
+
+
+
+
+‘‘**************************字符串
+'@功能:获取去除空格，tab和clean掉不可见字符的字符串
+Function GetCleanString(ByVal theStr As String)
+    theStr = Replace(theStr, Chr(10), "")
+    theStr = Replace(theStr, Chr(13), "")
+    theStr = Trim(theStr)
+    theStr = Application.WorksheetFunction.Clean(theStr)
+    GetCleanString = theStr
+End Function
+
+
+'@功能:根据文件完整路径获取文件名但不包括扩展名（如果文件路径是反向斜杠如何？）
+Public Function GetFileNameOfNoExt(ByVal FilePathFileName As String) As String
+    On Error Resume Next
+    Dim i As Integer, J As Integer, k As Integer
+    i = Len(FilePathFileName)
+    J = InStrRev(FilePathFileName, "\")
+    k = InStrRev(FilePathFileName, ".")
+     If k = 0 Then
+       GetFileNameOfNoExt= Mid(FilePathFileName, J + 1, i - J)
+    Else
+      GetFileNameOfNoExt= Mid(FilePathFileName, J + 1, k - J - 1)
+    End If
+End Function
+
+'截取两字符串中间部分
+Public Function GetStringBetweenAandB(ByVal originString As String, ByVal stringA As String, ByVal stringB As String, ByVal isIncludingA As Boolean, ByVal isincludingB As Boolean)
+      GetStringBetweenAandB= strBeforeA(strAfterA(originString, stringA, isIncludingA), stringB, isincludingB)
+End Function
+
+'某字符串前
+Public Function StrBeforeA(ByVal originString As String, ByVal targetAString As String, ByVal isIncludingTargetString As Boolean)
+    If InStr(originString, targetAString) = 0 Then
+        strBeforeA = ""
+        Exit Function
+    End If
+    If isIncludingTargetString Then
+        result = Left(originString, InStr(originString, targetAString) - 1)
+        result = result + targetAString
+    Else
+        result = Left(originString, InStr(originString, targetAString) - 1)
+    End If
+    strBeforeA = result
+End Function
+
+'某字符串后
+Public Function StrAfterA(ByVal originString As String, ByVal targetAString As String, ByVal isIncludingTargetString As Boolean)
+    If InStr(originString, targetAString) = 0 Then
+        strAfterA = ""
+        Exit Function
+    End If
+    If isIncludingTargetString Then
+        result = Right(originString, Len(originString) - InStr(originString, targetAString) + 1)
+    Else
+        result = Right(originString, Len(originString) - InStr(originString, targetAString) - Len(targetAString) + 1)
+    End If
+    strAfterA = result
+End Function
+
+
+‘**************PDF打印
+
+’=============PDF打印开始
+’第一步，对表格设置打印设置，每个表格分别设置，可以遍历
+Sub PrintSetting(ByVal sht As Worksheet)
+
+    Application.PrintCommunication = False
+    With sht.PageSetup
+        .PrintTitleRows = ""
+        .PrintTitleColumns = ""
+    End With
+    Application.PrintCommunication = True
+    ActiveSheet.PageSetup.PrintArea = ""
+    Application.PrintCommunication = False
+    With sht.PageSetup
+        .LeftHeader = ""
+        .CenterHeader = ""
+        .RightHeader = ""
+        .LeftFooter = ""
+        .CenterFooter = ""
+        .RightFooter = ""
+        .LeftMargin = Application.InchesToPoints(0.7)
+        .RightMargin = Application.InchesToPoints(0.7)
+        .TopMargin = Application.InchesToPoints(0.75)
+        .BottomMargin = Application.InchesToPoints(0.75)
+        .HeaderMargin = Application.InchesToPoints(0.3)
+        .FooterMargin = Application.InchesToPoints(0.3)
+        .PrintHeadings = False
+        .PrintGridlines = False
+        .PrintComments = xlPrintNoComments
+        .PrintQuality = 600
+        .CenterHorizontally = False
+        .CenterVertically = False
+        .Orientation = xlPortrait
+        .Draft = False
+        .PaperSize = xlPaperA4
+        .FirstPageNumber = xlAutomatic
+        .Order = xlDownThenOver
+        .BlackAndWhite = False
+        .Zoom = False
+        .FitToPagesWide = 1
+        .FitToPagesTall = 1
+        .PrintErrors = xlPrintErrorsDisplayed
+        .OddAndEvenPagesHeaderFooter = False
+        .DifferentFirstPageHeaderFooter = False
+        .ScaleWithDocHeaderFooter = True
+        .AlignMarginsHeaderFooter = True
+        .EvenPage.LeftHeader.Text = ""
+        .EvenPage.CenterHeader.Text = ""
+        .EvenPage.RightHeader.Text = ""
+        .EvenPage.LeftFooter.Text = ""
+        .EvenPage.CenterFooter.Text = ""
+        .EvenPage.RightFooter.Text = ""
+        .FirstPage.LeftHeader.Text = ""
+        .FirstPage.CenterHeader.Text = ""
+        .FirstPage.RightHeader.Text = ""
+        .FirstPage.LeftFooter.Text = ""
+        .FirstPage.CenterFooter.Text = ""
+        .FirstPage.RightFooter.Text = ""
+    End With
+    Application.PrintCommunication = True
+    'ActiveWorkbook.PrintOut Copies:=1, Collate:=True, IgnorePrintAreas:=False
+
+End Sub
+
+‘第二步，打印
+        tmpwb.ExportAsFixedFormat Type:=xlTypePDF, Filename:= _
+        outputPath + "\" + "xxx" + ".pdf", Quality:= _
+        xlQualityStandard, IncludeDocProperties:=True, IgnorePrintAreas:=False, _
+        OpenAfterPublish:=False
+
+
+‘=============PDF打印结束
+
