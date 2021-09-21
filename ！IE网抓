@@ -1,0 +1,108 @@
+*******************HTTP GET请求
+   Dim objXMLHTTP As Object
+    Dim strURL As String
+    Dim strText As String
+    Set objXMLHTTP = CreateObject("MSXML2.XMLHTTP")
+    With objXMLHTTP
+        strURL = "https://www.baidu.com/s?wd=excelhome"
+        .Open "GET", strURL, False
+        .send
+        strText = .responseText
+    End With
+    Set objXMLHTTP = Nothing
+
+*******************************************
+
+用htmlfile解析respose，获得element的内容（innertext）
+Set objDOM = CreateObject("htmlfile")
+objDOM.body.innerHTML = .responseText
+       For Each objTitle In objDOM.getElementsByTagName("h3")
+            With objTitle.getElementsByTagName("a")(0)
+                Cells(k, 2) = .innerText
+                Cells(k, 3) = .href
+            End With
+        Next objTitle
+
+**************************************
+
+
+**************IE浏览器
+  With CreateObject("InternetExplorer.application")
+        strURL = "https://xiamen.xueanquan.com/login.html"
+        .navigate strURL
+        .Visible = True
+        Do Until .readyState = 4
+            DoEvents
+        Loop
+ If InStr(1, .LocationURL, "mainpage", vbTextCompare) Then
+            MsgBox "你已登录，无需重复登录。"
+        Else
+            With .document        ’所以这里的document是htmlfile？
+                .getElementById("Uname").Value = strName
+                .getElementById("PassWord").Value = strPassWord
+                .getElementById("LoginButton").Click
+            End With
+            vntTime = Timer
+            Do While Timer < vntTime + 3
+            Loop
+            If InStr(1, .LocationURL, "mainpage", vbTextCompare) Then
+                MsgBox "恭喜，登录成功。"
+            Else
+                MsgBox "用户名或密码错误，登录失败。"
+            End If
+        End If
+
+*******************************解析JSON
+把返回的json，处理后，留下每个大括号对{}用逗号隔开的部分，然后首尾各增加[]。变成JavaScript里的数组（[]里是数组），数组里是对象（{}代表对象），对象里有key和value
+    Set objDOM = CreateObject("htmlfile")
+    Set objWindow = objDOM.parentWindow
+     strText = "<script>data=[" & strText & "]</script>"
+     objDOM.write strText
+ 遍历
+       For i = 0 To objWindow.eval("data.length") - 1
+            lngRow = lngRow + 1
+            intCol = 0
+            For j = 0 To UBound(avntTitle)
+                intCol = intCol + 1
+                Cells(lngRow, intCol) = objWindow.eval("data[" & i & "]." & avntTitle(j))   ‘数组里取对象key名来获得value
+            Next j
+        Next i	
+    Set objDOM = Nothing
+    Set objWindow = Nothing
+
+
+
+**********************获取网页表格数据
+方式一：数据连接QueryTables
+方式二：DownloadHTMLFile
+Set objDOM = CreateObject("htmlfile")
+objDOM.body.innerHTML = .responseText
+    Set objTable = objDOM.getElementsByTagName("TABLE")(3)
+    For Each objTR In objTable.Rows
+        lngRow = lngRow + 1
+        intCol = 0
+        For Each objCell In objTR.Cells
+            intCol = intCol + 1
+            Cells(lngRow + 4, intCol) = objCell.innerText
+        Next objCell
+    Next objTR
+    Set objXMLHTTP = Nothing
+    Set objDOM = Nothing
+    Set objTable = Nothing
+    Set objTR = Nothing
+    Set objCell = Nothing
+
+方式三，利用剪贴板，截取表格 html 首尾加<table>标记
+    strText = Split(Split(strText, "<table")(4), "</table>")(0)
+    strText = "<table" & strText & "</table>"
+    CopyToClipBoard strText
+    ActiveSheet.UsedRange.Offset(4).ClearContents
+    Range("a5").Select
+    ActiveSheet.Pas
+
+
+
+***************************
+
+
+
