@@ -1,0 +1,35 @@
+'替换
+Sub Rep(ByRef wordD As Word.Document, ByVal FindCode As String, ByVal ReplaceCode As String)
+    With wordD.Range
+        .Find.ClearFormatting
+        .Find.Replacement.ClearFormatting
+        With .Find
+            .Text = FindCode
+            .Replacement.Text = ReplaceCode
+            .MatchWildcards = False
+        End With
+        .Find.Execute Replace:=wdReplaceAll
+    End With
+End Sub
+
+Public Sub Main()
+    tihuanCount = 2
+    lastrow = Cells(Rows.Count, 1).End(3).Row
+    Dim Wdapp As Word.Application
+    Set Wdapp = CreateObject("word.application")
+    Wdapp.Visible = True
+    For i = 2 To lastrow
+        thepath = ThisWorkbook.Path
+        Dim WdDocument As Word.Document
+        Set WdDocument = Wdapp.Documents.Open(thepath + "\template.doc")
+        For c = 1 To tihuanCount
+            Rep WdDocument, Cells(1, c).Text, Cells(i, c).Text
+        Next
+        WdDocument.SaveAs ThisWorkbook.Path & "\结果\" & Cells(i, 2).Text + ".doc"
+        WdDocument.Close
+        Set WdDocument = Nothing
+    Next
+Wdapp.Quit
+Set Wdapp = Nothing
+
+End Sub
