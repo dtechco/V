@@ -1,0 +1,5 @@
+早期绑定: （需要在VBE--工具--引用中勾选Microsoft VBScript Regular Expressions 5.5）
+Dim regx AS RegExp
+Set regx=new regexp (或dim regx as new regexp)
+后期绑定:
+Set regex = CreateObject("VBScript.RegExp")
