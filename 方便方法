@@ -27,7 +27,14 @@ Function IsSheetExist(ByVal wb As Workbook, ByVal shtname As String)
 End Function
 
 ‘**************************Range对象
-
+‘列号转字母
+Function ColumnIntIndexToLetters(ByVal num As Long) As String
+    ColumnIntIndexToLetters = Replace(Cells(1, num).Address(False, False), "1", "")
+End Function
+‘字母转列号
+Function ColumnLettersToIntIndex(ByVal AB As String) As Long
+    ColumnLettersToIntIndex = Range("a1:" & AB & "1").Cells.Count
+End Function
 ‘**************************Chart对象
 
 ‘**************************Shape对象
