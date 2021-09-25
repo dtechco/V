@@ -1,0 +1,136 @@
+作者：「已注销」
+链接：https://www.zhihu.com/question/26798178/answer/159583047
+来源：知乎
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+答应了好久的优化版代码，一直拖到今天才想起来。这次干脆把它写成自定义函数了，需要的老铁自取。20万条数据正常vlookup要卡至少5分钟，这串代码亲测10秒内完成。
+'****************************************************************
+'* 函数名:sVlookup
+'* 功能:进行批量匹配，是对vlookup函数功能的拓展。该函数为数组函数，使用时请注意。
+'* 参数: lookup_value_array  必选,需要匹配的值所在的区域
+'*       table_array_key     必选,原始数据中对应匹配的关键值所在的区域
+'*       table_array_item    必选,原始数据中需要返回的值所在区域
+'* 错误: 计算出错时返回#VALUE!
+'*****************************************************************
+
+Public Function sVlookup(lookup_value_array As Range, table_array_key As Range, table_array_item As Range)
+Set d = CreateObject("scripting.dictionary")
+
+aRng = Intersect(lookup_value_array, lookup_value_array.Parent.UsedRange)
+bRng = Intersect(table_array_key, table_array_key.Parent.UsedRange)
+cRng = Intersect(table_array_item, table_array_item.Parent.UsedRange)
+'参数格式错误检查
+Dim i As Long
+
+Do
+If UBound(aRng, 2) > 1 Then
+MsgBox "第1个参数只能为单列数据"
+Exit Do
+End If
+
+
+If UBound(bRng, 2) > 1 Then
+MsgBox "第2个参数只能为单列数据"
+Exit Do
+End If
+
+If UBound(cRng, 2) > 1 Then
+MsgBox "第3个参数只能为单列数据"
+Exit Do
+End If
+
+
+If UBound(bRng, 1) <> UBound(cRng, 1) Then
+MsgBox "第2个参数与第3个参数行数不一致，检查两列数据"
+Exit Do
+End If
+
+For i = 1 To UBound(bRng, 1)
+    d(bRng(i, 1)) = cRng(i, 1)
+Next
+
+Dim arr(), s As Long
+s = UBound(aRng, 1)
+ReDim arr(1 To s, 1 To 1)
+For i = 1 To s
+    If d.exists(aRng(i, 1)) Then
+        arr(i, 1) = d(aRng(i, 1))
+    Else
+        arr(i, 1) = "无匹配值"
+    End If
+Next
+
+sVlookup = arr
+Exit Do
+Loop
+
+Set d = Nothing
+End Function
+
+说结论：用字典，效率提升非常明显，完美解决卡死问题。
+楼上
+@叫天哥
+贴的代码非常好用，补充做一些说明吧。
+Sub 随便取()
+Set d = CreateObject("scripting.dictionary")
+'如果要使用字典功能，必须先创建变量，字母d可以自己换
+arr = Sheet2.Range("a2:e" & Cells(Rows.Count, 1).End(xlUp).Row)
+'这一步创建了一个arr的数组，并将sheet2上的源数据写入数组；
+For i = 1 To UBound(arr)
+'这里用for…next循环，从1循环到arr数组的最大下标
+d(arr(i, 1)) = arr(i, 5)
+'往字典里写入源数据，第一列的值为key，第五列的值为item
+'这里的1和5都要根据你源数据的实际情况去修改
+Next
+'n循环完之后，sheet2上的源数据全部写入字典d中
+接下来开始做匹配了，后面的代码替代vlookup的功能
+
+For Each rng In Sheet1.[a2:a30620]
+'这里创建了rng这个对象变量，并使用for each …next公式，遍历sheet1
+上A列的每个单元格
+rng.Offset(, 20) = d(rng.Value)
+'针对A列的每个单元格，对它往后平移20位的单元格赋值；
+'赋的什么值？字典中rng单元格中的值所对应的item
+'这里的20也是可以自己修改的，如果要把匹配到的值写在B列中，就改成1
+Next
+End Sub
+上面这段涉及到了数组、两种循环方式，对初学者来说还是比较难理解的，所以改了一个稍微简单一点的版本。
+Sub 搞事情()
+Set d = CreateObject("scripting.dictionary")
+sheets(2).select
+For i = 1 To sheet2源数据的行数
+d(arr(i, 1)) = arr(i, 5)
+Next
+
+sheets(1).select
+for i =1 to 30620
+
+if d.exists(cells(i,1).value) then
+cells(i,21)=d(cells(i,1).value)
+end if
+
+Next
+End Sub
+
+Sub 优化()
+Set d = CreateObject("scripting.dictionary")
+sheets(2).select
+temp=cells(rows.count,"A").end(xlup).row
+arr=range("a1:e" & temp)
+For i = 1 To ubound(arr)
+d(arr(i, 1)) = arr(i, 5)
+Next
+
+sheets(1).select
+temp=cells(rows.count,"A").end(xlup).row
+brr=range("a1:a" & temp)
+crr=range("u1:u" & temp)
+
+for i=1 to ubound(brr)
+if d.exists(brr(i,1)) then
+crr(i,1)=d(brr(i,1))
+end if
+Next
+
+End Sub
+编辑于 02-28
