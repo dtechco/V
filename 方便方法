@@ -1,3 +1,186 @@
+目录
+代码框架，代码块	5
+检查表是否正确，一发现有不正确的就返回	5
+'检查表格是否符合所有条件	6
+1.第一个检查项目	6
+检查常用手法	7
+检查某顺序的几个（multiline）field是否存在于指定尺寸的range里，考不考虑field的顺序option	7
+检查某顺序的几个field是否存在于某range里或某相同排列的arr里，考不考虑field的顺序option	8
+CompareSingleDimentionArray检查字段是否缺失，缺失了哪些，多出了哪些，横向，纵向	8
+比较两个数组的size（shape）	9
+提供两个数组，获得第一个数组的元素相对于第二个数组的绝对序号	9
+提供一个数组和一个range，获得第一个数组的元素相对于range的表格列号和相对数组的列号	9
+获得某个横向或者纵向的单行或单列的field-row 或field-col的   rowindex或colIndex的字典	9
+常规场景操作自动化	10
+1.汇总框架	10
+1.文件夹	11
+文件夹是否存在	11
+文件是否存在	11
+文件夹不存在则创建CreateDir()	11
+获取文件夹下文件列表	11
+获取文件夹下某些文件格式列表	11
+获取文件夹下子文件夹列表	11
+获取文件夹和子文件夹下所有文件列表	11
+获取文件夹和子文件夹下的某些文件格式列表	11
+删除文件夹下文件-按文件列表删	11
+删除文件夹下文件-按某些文件格式删	11
+清空文件夹(删除再新建)	11
+2.文件	11
+文件路径	11
+文件格式名	11
+文件名称	11
+文件短名带格式名	11
+文件其他信息	11
+3.	11
+某表名表格是否存在	11
+某些表名是否存在	11
+提供表名数组，返回存在于工作簿的表名(实质是提供数组A和数组B，返回A存在于数组B的结果)	12
+提供表名数组，返回不存在于工作簿的表名(实质是提供数组A和数组B，返回A不存在于数组B的结果)	12
+数组元素相减（集合相减）？交集？	12
+二维数组转一维	12
+多行多列数组转单行单列数组	12
+按表名数组创建新表（已存在的如何处理？）	13
+按表名数组删除表（不存在的表名是否报错？）	13
+表格位置排序	13
+删除所有表除了某表名	13
+删除所有表除了某表	13
+删除所有表除了数组里的表名	13
+删除所有表除了数组里的表（数组里不存在于实际工作簿的如何处理？）	13
+选中某些表（按表名，按表对象）	13
+4.查找	13
+查找	13
+SearchRange 按正则查找，按数值查找，按模糊查找。返回符合的range数组，包括合并单元格，是否是合并单元格，返回合并单元格所有信息，起始行列，合并的行列数	13
+SearchCell，按正则查找，按数值查找，按模糊查找。返回符合的单元格数组，如果查找不到则返回空数组还是空？	13
+SearchInRange，返回列号或者区域的相对序号	13
+搜索field在表头的位置，相对列序号	13
+搜索侧边field在单列表头的位置，相对行序号	13
+MergedRange起始行列，占据行列数	14
+该表是否存在某些特征的单元格（关键词数组，全符合，或者符合部分）	14
+该表是否存在某些特征的连续几个单元格（关键词数组，全符合，或者符合部分，模糊匹配还是全匹配，大小写）	14
+5.基于查找的处理	14
+合并单元格解除并填充	14
+符合条件的range或cell，填充数值或者清除	14
+SearchRange多条件：相对位置的旁边单元格有其他标识(规定顺序，不规定顺序，上下，左右，矩阵)	14
+union所有符合条件的结果range	14
+union所有符合条件的结果cell	14
+union所有符合条件的range所在的行或列	14
+union所有符合条件的cell所在的行或列	14
+替换	14
+6.定位范围	14
+最大行	14
+最大列	14
+第一行非空行号	14
+第一列非空列号	14
+/////自此可以获得一个区域，可能包含表头，可能包含侧表头，上下左右的非数据区域	14
+7.定义一个数据区，设定表头行数，侧边field行数，获得实际数据区域，实际数据数组	15
+行数	15
+列数	15
+实际数据行数	15
+实际数据列数	15
+取某列，按序号，按表头，带不带表头，带不带表尾，取到最后还是取到最后一行非空	15
+取某行，按序号，按侧边表头，带不带表头，带不带表尾，取到最后还是取到最后一列非空	15
+8.区域操纵	15
+区域行列对调	15
+WkSheetDelete表删除列	15
+RangeDeleteBy    range删除相对列序号	15
+9.数组操纵	16
+数组按（行号数组）A.清空clear行（清空后行数不变），B.删除行（删除后数组行数变少）	16
+C.替换	16
+数组按（列号数组）A.清空clear行（清空后列数不变），B.删除delete行（删除后数组列数变少）	16
+C.替换	16
+按行或列序号数组，提取某数组形成新数组	16
+数组按条件清空或者删除行列。条件：某行或某列的一个或多个字段符合某特征。	16
+数据清洗	16
+增删查改	16
+数组中间，头，尾，增加行列（1.增加新数据 2.增加空行列）	16
+复制一个一模一样的数组	16
+数组维度	18
+创建精简版（按功能拆解，需要调用更多外部函数）和完整版的函数	18
+生成一个相同行列的空数组	18
+生成一个比原来数组增加空行列的数组	19
+向下和向左改变Array的尺寸	20
+一维转二维（数据不变）	20
+修改数组下限开始数字	20
+按新序号生成新数组，新数组的列数行数大于等于旧数组，新数组的数据可能只获取旧数组的一部分列号或者行号	21
+堆叠多个数组（垂直vstack，水平hstack）	21
+切割数组	21
+截取数组	21
+去掉或截取最后几行，几列	21
+数组处理，参考numpy和pandas框架	21
+10.对数组进行统计	21
+1.临时表里sql统计	21
+2.常见统计：	21
+按列，按行，按整个区域	21
+最大，最小	21
+取唯一	21
+数组一对多查找，数组一对多展开，填充纵向	21
+11.集合	21
+12.字典	21
+13.数据表range与数组	22
+数组粘贴到数据表,返回信息字典，{error:errmsg,lastrow:xxx,}	22
+range设定每个range行或列的数据格式，采用text的格式数组然后读取应用	22
+工作表按格式字典（列号：text format）设定整列格式	22
+区域先设定格式再粘贴数组 pasteArrOnRangeWithFormat(range,arr,formatArray)	22
+vlookup和hlookup和index和match的应用	23
+可能用得着的其他现成函数	23
+分为process(处理)和信息info	25
+单元格高级合并	25
+纵向合并相同单元格	25
+横向合并相同单元格	25
+合并单元格并保留所有值（单元格里原来的每行用换行符换行）	25
+纵向取消合并单元格并填充	25
+横向取消合并单元格并填充	25
+检查关键词列表(arr,或range)有多少存在于某个text（range）中，应用场景比如：表头检测，返回字符串，空，关键词逗号隔开的字符串	25
+2.拆分	25
+总数据key-value, 分数据key，需要填入vlaue。（形式：arr，dic，range）	26
+svlookup	26
+常规手动一系列操作自动化	26
+批量将工作表转为独立工作簿	26
+数据处理方便方法	26
+常用对象在高级语言里有的特性，做vba化	26
+5. 复制指定文件夹下多工作簿的工作表到汇总工作簿	26
+常用代码封装：判断型isXXXX	27
+‘拆分表格到多个表格	27
+’拆分表格到多个文件（每个文件单一表格）	27
+获取value的arr或rng，从不同方法获得：	27
+规范的sheet，一行title	27
+某range，n行title，N行左title，n行右title，n行底title	27
+特殊:某range,n行title	27
+某range,无title	27
+'**************************工作簿	27
+‘**************************工作表	27
+‘**************************Range对象	28
+‘**************************Chart对象	29
+‘**************************Shape对象	29
+‘**************************数据输入	29
+'**************************菜单和工具栏	29
+'**************************Ribbon功能区	29
+'**************************控件	30
+‘**************************'窗体	30
+'**************************目录和文件操作	30
+’‘**************************文件的输入输出	32
+‘‘**************************数据库	32
+’‘**************************Internet	32
+‘‘**************************XML	32
+’‘**************************数组与字典	32
+集合转换到数组CollectionToArray	33
+‘‘**************************代码优化与高效编程	33
+‘‘**************************字符串	33
+‘**************PDF打印	34
+数组粘贴到range的左上角第一个单元格	36
+'二维数组行数	36
+'二维数组列数	36
+’数组元素个数	36
+
+
+
+
+
+
+
+
+
+
 代码框架，代码块
 如：
 检查表是否正确，一发现有不正确的就返回
@@ -114,7 +297,9 @@ Function isMultilineFieldMatch(ByVal arrToDetect As Variant, ByVal arrStandard A
 End Function
 
 
-
+对数组所有元素进行lcase和ucase设置
+ArrayLcase(arr)
+ArrayUcase(arr)
 
 
 检查某顺序的几个field是否存在于某range里或某相同排列的arr里，考不考虑field的顺序option
@@ -185,6 +370,148 @@ Function GetShapeByNewBaseNum(ByVal arr As Variant, ByVal newBaseNum As Long)
     GetShapeByNewBaseNum = Array(newBaseNum, newBaseNum + arrRowCount - 1, newBaseNum + arrColCount - 1)
 End Function
 
+数组转集合
+'================================
+' VBA数组转换到集合ArrayToCollection
+'
+' http://www.cnhup.com
+'================================
+ 
+Public Function ArrayToCollection( _
+  Arr As Variant, ByRef Coll As Collection) _
+  As Boolean
+Dim Ndx As Long
+Dim KeyVal As String
+ 
+If IsArray(Arr) = False Then
+    ArrayToCollection = False
+    Exit Function
+End If
+ 
+On Error GoTo ErrH:
+Select Case NumberOfArrayDimensions(Arr:=Arr)
+    Case 0
+        ArrayToCollection = False
+        Exit Function
+        
+    Case 1
+        For Ndx = LBound(Arr) To UBound(Arr)
+            Coll.Add Item:=Arr(Ndx)
+        Next Ndx
+    
+    Case 2
+        For Ndx = LBound(Arr, 1) To UBound(Arr, 1)
+            KeyVal = Arr(Ndx, 1)
+            If Trim(KeyVal) = vbNullString Then
+                Coll.Add Item:=Arr(Ndx, 1)
+            Else
+                Coll.Add Item:=Arr(Ndx, 0), Key:=KeyVal
+            End If
+        Next Ndx
+    
+    Case Else
+        ArrayToCollection = False
+        Exit Function
+ 
+End Select
+ 
+ArrayToCollection = True
+Exit Function
+ 
+ErrH:
+    ArrayToCollection = False
+ 
+End Function
+
+集合转数组
+'================================
+' VBA集合转换到数组CollectionToArray
+'
+' http://www.cnhup.com
+'================================
+ 
+Public Function CollectionToArray( _
+  Coll As Collection, Arr As Variant) _
+  As Boolean
+Dim V As Variant
+Dim Ndx As Long
+ 
+If Coll Is Nothing Then
+    CollectionToArray = False
+    Exit Function
+End If
+ 
+If IsArray(Arr) = False Then
+    CollectionToArray = False
+    Exit Function
+End If
+If IsArrayDynamic(Arr:=Arr) = False Then
+    CollectionToArray = False
+    Exit Function
+End If
+ 
+If Coll.Count < 1 Then
+    CollectionToArray = False
+    Exit Function
+End If
+    
+ReDim Arr(1 To Coll.Count)
+ 
+For Ndx = 1 To Coll.Count
+    If IsObject(Coll(Ndx)) = True Then
+        Set Arr(Ndx) = Coll(Ndx)
+    Else
+        Arr(Ndx) = Coll(Ndx)
+    End If
+Next Ndx
+ 
+CollectionToArray = True
+ 
+End Function
+
+
+集合对比
+
+
+
+单行单列数组对比
+检查两组元素数组，对比
+步骤：
+1.检查数组是不是单列或者单行
+2.检查每个数组是否有重复项（是否唯一），根据CompareMode ，两种模式，文本（不区分文本大小）和二进制（区分文本大小写）
+3.检查每个数组如果算重复项有多少count，去重后有多少count
+4.如果两列数组方向一致，数组个数一致，则比较是否完全一致
+5.如果如果两列数组方向一致，数组个数一致，且各自都没有重复项，输出数组A在数组B里的index，以key-value的方式输出
+输出字典
+数组1元素个数
+数组2元素个数
+数组1和数组2元素个数差异
+数组1与数组2共同元素数组
+数组1比数组2多的元素数组
+数组1比数组2少的元素数组
+
+
+
+参考
+CompareMode 属性包含以下部分：
+语法
+Part	说明
+object	必填。 始终为 Dictionary 对象的名称。
+compare	可选。 如果提供 ，compare 是表示 StrComp 等函数所使用的比较模式的值。
+
+compare 参数可以包含以下值：
+设置
+常量	值	说明
+vbUseCompareOption	-1	使用 Option Compare 语句的设置来执行比较。
+vbBinaryCompare	0	执行二进制比较。
+vbTextCompare	1	执行文本比较。
+vbDatabaseCompare	2	仅用于 Microsoft Access。 根据数据库中的信息执行比较。
+
+
+
+获得数组唯一值数组,三种比较模式，参考字典
+UniqueArray()
+
 
 
 CompareSingleDimentionArray检查字段是否缺失，缺失了哪些，多出了哪些，横向，纵向
@@ -212,8 +539,13 @@ GetArrayWithDataTypeChanged(byval arr as variant,byval col as long)
 比较两个数组的size（shape）
 CompareArrayShape(byval arr1 as variant ,byval arr2 as variant)
 
-
-
+生成空数组
+Function CreateEmptyArray(ByVal rowCount As Long, ByVal colCount As Long, Optional baseNum As Variant)
+'创建新数组
+    Dim resultArr() As Variant
+    ReDim resultArr(baseNum To baseNum + rowCount - 1, baseNum To baseNum + colCount - 1)
+    CreateEmptyArray = resultArr
+End Function
 提供两个数组，获得第一个数组的元素相对于第二个数组的绝对序号
 前提:两个数组都唯一
 
@@ -484,12 +816,37 @@ Function CreateaExpandArray(ByVal arr As Variant, ByVal addTopCount As Long, ByV
     End If
 End Function
 
+提供一个数组A，选定某列作为key，选择另一个区域或数组B，选定列作为key，选择B的某列填充到数组A
 
-向下和向左改变Array的尺寸
+提供一个区域A，选定某列作为key，选择另一个区域或数组B，选定列作为key，选择B的某列填充到区域A
+
+
+
+向下和向右改变Array的尺寸
 ResizeArray，也就是Redim Preserve
-Function ResizeArray(ByVal arr As Variant, ByVal row As Long, ByVal col As Long)
+Function ResizeArray(ByVal arr As Variant, ByVal newRow As Long, ByVal newCol As Long)
 
+'TODO判断维度
+
+'判断新行列数是否比原有的小
+'二维
+    arrRowCount = UBound(arr, 1) - LBound(arr, 1) + 1
+    arrColCount = UBound(arr, 2) - LBound(arr, 2) + 1
+    
+    Dim resultArr() As Variant
+    ReDim resultArr(LBound(arr, 1) To LBound(arr, 1) + newRow - 1, LBound(arr, 2) To LBound(arr, 2) + newCol - 1)
+    '此处用粘贴数组到数组或者重新写粘贴代码
+    For i = LBound(arr, 1) To UBound(arr, 1)
+        For j = LBound(arr, 2) To UBound(arr, 2)
+            resultArr(i, j) = arr(i, j)
+            
+        Next j
+    
+    Next i
+    
+    ResizeArray = resultArr
 End Function
+
 一维转二维（数据不变）
 Function Arr1DTo2D(arr)
     If IsArray(arr) = False Then
@@ -515,6 +872,34 @@ Function Arr1DTo2D(arr)
 End Function
 
 只有一行的二维转一维
+‘还没完成
+Function SingleLineArr2DTo1D(ByVal arr As Variant, Optional baseNum As Variant)
+'判断为维度
+
+If nDim(arr) <> 2 Then
+    '检测到参数非二维数组
+    Stop
+    End
+End If
+
+'判断是否是单行
+If UBound(arr, 1) <> LBound(arr, 1) Then
+    '检测到参数非单行数组
+    Stop
+    End
+End If
+
+If IsMissing(baseNum) Then
+baseNum = 0
+End If
+Dim resultArr() As Variant
+ReDim resultArr(baseNum To baseNum + UBound(arr, 2) - LBound(arr, 2))
+'数组粘贴到数组
+'/////TODO
+
+
+SingleLineArr2DTo1D = resultArr
+End Function
 
 修改数组下限开始数字
 
@@ -587,6 +972,36 @@ End Function
 数组粘贴到数据表,返回信息字典，{error:errmsg,lastrow:xxx,}
 
 range设定每个range行或列的数据格式，采用text的格式数组然后读取应用
+考虑列序号，连续列的设置，用字符串当做参数，还是数组
+先做最繁琐的，然后做简便的作为衍生函数
+各自列有各自的格式
+创建枚举
+Private Enum ColumnIndexMode
+RelativeInRange = 0
+SheetColumnNumber= 1
+SheetColumnLetter=2
+End Enum
+
+Enum
+相对列号模式（1开始）
+表格绝对列号数字模式
+表格绝对列号字母模式
+
+
+
+‘数组作为参数
+SetRangeColumnNumberFormat(Column模式, 相对列号数组/表列号数字数组/列号字母数组/列号数字字母混合数组，格式数组)
+‘字符串作为参数（可以便捷填写连续的位置）
+- 衍生 SetRangeColumnNumberFormat(Column模式, 按自定义格式写字符串，格式数组)
+
+
+
+
+SetSheetColumnNumberFormat(byval sht as worksheet,byval colArr as variant,a)
+
+多个列数组或字符串，应用同一种格式
+
+
 工作表按格式字典（列号：text format）设定整列格式
 
 区域先设定格式再粘贴数组 pasteArrOnRangeWithFormat(range,arr,formatArray)
@@ -1088,3 +1503,7 @@ Get2DArrayColumnCount = UBound(theArray, 2) - LBound(theArray, 2) + 1
 End Function
 
 ’数组元素个数
+
+
+
+
