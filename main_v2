@@ -1,0 +1,1426 @@
+查找	2
+定位	2
+Range	2
+Range to Array	2
+按某range的几个列号（绝对，相对）组成新数组	2
+ADO	2
+Array	3
+基本属性	3
+判断二维数组的下限BaseNum是否一致	3
+函数内部常用：检查参数是否为空数组和是否为二维数组	3
+调整二维数组的下限BaseNum为一致	3
+数组维度	4
+复制	4
+复制一个一模一样的数组	4
+TODO 生成一个相同行列的空数组	6
+生成空数组	6
+扩	6
+缩	6
+定位	6
+删除	6
+清空	6
+取整列或整行	6
+调换	6
+其他变形	6
+二维数组转一维	6
+多行多列数组转单行单列数组	6
+转换成其他基本数据类型（如集合字典等等）	6
+Arr与Arr	8
+让有数据的数组像粘贴到range左上角第一个单元格一样粘贴到另一个数组里（考虑不考虑边界自动扩充的问题）	8
+数组比较	9
+数组元素相减（集合相减）？交集？	9
+场景：	9
+匹配In	9
+匹配Out	9
+按行处理：	9
+按多行处理：	9
+按列处理：	9
+对数组某列进行lcase 和ucase设置	9
+按多列处理：	9
+对所有元素进行处理：	9
+对数组所有元素进行lcase和ucase设置	9
+统计	9
+DataFrame结构	10
+Array To Range	10
+集合	10
+基本属性	10
+集合对比	10
+
+查找
+(4)参数LookIn，可选。指定查找的范围类型，可以为以下常量之一：xlValues、xlFormulas或者xlComments，默认值为xlFormulas。对应于“查找与替换”对话框中，“查找范围”下拉框中的选项。
+(11)在每次使用Find方法后，参数LookIn、LookAt、SearchOrder、MatchByte的设置将保存。如果下次使用本方法时，不改变或指定这些参数的值，那么该方法将使用保存的值。
+在VBA中设置的这些参数将更改“查找与替换”对话框中的设置；同理，更改“查找与替换”对话框中的设置，也将同时更改已保存的值。也就是说，在编写好一段代码后，若在代码中未指定上述参数，可能在初期运行时能满足要求，但若用户在“查找与替换”对话框中更改了这些参数，它们将同时反映到程序代码中，当再次运行代码时，运行结果可能会产生差异或错误。若要避免这个问题，在每次使用时建议明确的设置这些参数。
+
+查找返回单个单元格
+'<单元格区域>.Find (What，[After]，[LookIn]，[LookAt]，[SearchOrder]，[SearchDirection]，[MatchCase]，[MatchByte]，[SearchFormat])
+'<单元格区域>.Find (要查找的数据，开始查找的位置，查找的范围类型，完全匹配还是部分匹配，行列方式查找，向前向后查找，区分大小写，全角或半角，查找格式)
+' 可能找不到符合的单元格，因此使用前先判断下
+'    If Not 返回值 Is Nothing Then
+'    End If
+'参数：
+‘lookin: xlValues、xlFormulas或者xlComments
+'needMatchWhole：是否全部匹配
+'needMatchCase：是否要匹配大小写
+Function SearchInRange(ByVal rng As Range, ByVal strContent As String,byval lookin as variant, ByVal needMatchWhole As Boolean, ByVal needMatchCase As Boolean) As Range
+    Dim findRange As Range
+    Set findRange = rng.Find(strContent, , lookin, IIf(needMatchWhole, xlWhole, xlPart), , , needMatchCase)
+    Set SearchInRange = findRange
+End Function
+
+TODO查找返回多个单元格
+
+定位
+枚举
+创建枚举
+枚举定义要放在类模块中！！
+Enum列序号类型
+Range列号
+Enum RangeColumnIndexType
+RangeColumnIndexType_RelativeInRange = 1
+RangeColumnIndexType_SheetColumnNumber= 2
+RangeColumnIndexType_SheetColumnLetter=3
+End Enum
+Enum
+相对列号模式（1开始）
+表格绝对列号数字模式
+表格绝对列号字母模式
+Array行列号
+Public Enum ArrayIndexType
+ArrayIndexType_ElementCountIndex = 1
+ArrayIndexType_ArrayNatureBaseIndex = 2
+End Enum
+Enum
+相对列号模式（1开始）
+数组Lbound开始的数字模式
+Sheet列序号
+Public Enum SheetColumnIndexType
+SheetColumnIndexType_SheetColumnNumber = 1
+SheetColumnIndexType_SheetColumnLetter = 2
+End Enum
+Range
+选择
+选中整个工作表Cells.Select
+选中单列Columns(2).Select
+选中单行Rows(8).Select
+多行Rows("2:7").Select
+多列Columns("C:F").Select
+整行ActiveCell.EntireRow.Select
+整列第一个ActiveCell.EntireColumn.Cells(1).Value = "hello world"
+整行偏移ActiveCell.EntireRow.Offset(1, 0).Cells(1).Value = "hello world"
+
+‘列号转字母
+Function ColumnIntIndexToLetters(ByVal num As Long) As String
+    ColumnIntIndexToLetters = Replace(Cells(1, num).Address(False, False), "1", "")
+End Function
+‘字母转列号
+Function ColumnLettersToIntIndex(ByVal AB As String) As Long
+    ColumnLettersToIntIndex = Range("a1:" & AB & "1").Cells.Count
+End Function
+
+
+取值：
+Range获取子Range
+扩大Range
+操作：选区，复制（带格式）
+
+判断
+选取复制
+
+Range to Array
+TODO按某range的几个列号（绝对，相对）组成新数组
+CreateArrayFromRange
+
+Range格式
+画边框
+Sub RangeDrawBorders(ByVal rng As Range)
+    rng.Borders.LineStyle = xlNone
+    rng.Borders.LineStyle = xlContinuous
+End Sub
+
+设置整个表的多列，应用相同的单元格格式
+字符串参数。字符串规则：”1,3,5,7:10,”   “A,C,D:G,H”
+‘需要借助抽取出来的ConvertSheetColIndexChainToRngVarStr函数
+Sub SetSheetEntireColumnFormat(ByVal sht As Worksheet, ByVal colIndexType As SheetColumnIndexType, _
+ByVal strColIndexChain As String, ByVal strFormat As String)
+    If strColIndexChain = "" Then
+    '参数不应该为空
+    Stop
+    End If
+    'rngColStr最终放到Range的多列参数字符串
+    ' 把strColIndexChain根据colIndexType类型，转换为range最终接受的字符串参数。ConvertSheetColIndexChainToRngVarStr
+    rngColStr = ConvertSheetColIndexChainToRngVarStr(colIndexType, strColIndexChain)
+    sht.Range(rngColStr).NumberFormatLocal = (strFormat)
+End Sub
+
+辅助处理函数。把strColIndexChain根据colIndexType类型，转换为range最终接受的字符串参数
+Function ConvertSheetColIndexChainToRngVarStr(ByVal colIndexType As SheetColumnIndexType, _
+ByVal strColIndexChain As String)
+    'rngColStr最终放到Range的多列参数字符串
+    rngColStr = ""
+    '数字序号类型
+    If colIndexType = SheetColumnIndexType_SheetColumnNumber Then
+        subColStrArr = Split(strColIndexChain, ",")
+        For Each subColStr In subColStrArr
+            If subColStr <> "" Then
+                tmpStr = ""
+                If InStr(subColStr, ":") Then
+                    '列号转字母 =Replace(Cells(1, num).Address(False, False), "1", "")
+                    '判断是不是数字，不是则发出异常
+                    If (IsNumeric(Split(subColStr, ":")(0)) And IsNumeric(Split(subColStr, ":")(1))) = False Then
+                        Stop
+                        End
+                    End If
+                    tmpStr = Replace(Cells(1, Val(Split(subColStr, ":")(0))).Address(False, False), "1", "") & ":" & Replace(Cells(1, Val(Split(subColStr, ":")(1))).Address(False, False), "1", "")
+                Else
+                    '列号转字母 =Replace(Cells(1, num).Address(False, False), "1", "")
+                    '判断是不是数字，不是则发出异常
+                    If IsNumeric(subColStr) = False Then
+                        Stop
+                        End
+                    End If
+                    tmpStr = Replace(Cells(1, Val(subColStr)).Address(False, False), "1", "") & ":" & Replace(Cells(1, Val(subColStr)).Address(False, False), "1", "")
+                End If
+                If rngColStr = "" Then
+                    rngColStr = tmpStr
+                Else
+                    rngColStr = rngColStr + "," + tmpStr
+                End If
+            End If
+        Next subColStr
+    End If
+    
+    '字母序号类型
+    If colIndexType = SheetColumnIndexType_SheetColumnLetter Then
+        subColStrArr = Split(strColIndexChain, ",")
+        For Each subColStr In subColStrArr
+            If subColStr <> "" Then
+                tmpStr = ""
+                If InStr(subColStr, ":") Then
+                    '判断是不是数字，是则发出异常
+                    If (IsNumeric(Split(subColStr, ":")(0)) Or IsNumeric(Split(subColStr, ":")(1))) Then
+                     '不应该为数字
+                        Stop
+                        End
+                    End If
+                    tmpStr = subColStr
+                Else
+                   If IsNumeric(subColStr) Then
+                   '不应该为数字
+                        Stop
+                        End
+                    End If
+                    tmpStr = subColStr & ":" & subColStr
+                End If
+                If rngColStr = "" Then
+                    rngColStr = tmpStr
+                Else
+                    rngColStr = rngColStr + "," + tmpStr
+                End If
+            End If
+        Next subColStr
+    End If
+ ConvertSheetColIndexChainToRngVarStr = rngColStr
+End Function
+
+设置表格某些列整列为文本格式
+Sub SetSheetEntireColumnFormatAsText(ByVal sht As Worksheet, ByVal colIndexType As SheetColumnIndexType, _
+ByVal strColIndexChain As String)
+Call SetSheetEntireColumnFormat(sht, colIndexType, strColIndexChain, "@")
+End Sub
+
+设置表格某些列整列为数值格式
+Sub SetSheetEntireColumnFormatAsNumber(ByVal sht As Worksheet, ByVal colIndexType As SheetColumnIndexType, _
+ByVal strColIndexChain As String)
+Call SetSheetEntireColumnFormat(sht, colIndexType, strColIndexChain, "0.00")
+End Sub
+
+
+设置整个表的多列各自整列的单元格格式，使用各自列的格式字典
+格式字典样式：
+Dim formatDic As Object
+Set formatDic = CreateObject("scripting.dictionary")
+formatDic.Add "1,3,5:7", "@"
+formatDic.Add "2,15", "0.00%"
+参数dic_ColChain_Format为列号字符串为key，format字符串为value的字典
+Sub SetSheetMultiColumnFormatWithVariousConfig(ByVal sht As Worksheet, _
+ByVal colIndexType As SheetColumnIndexType, _
+ByVal dic_ColChain_Format As Object)
+    '检查参数状态
+    'TODO检查colIndexType是否在枚举应有的范围内
+    '检查dic_ColChain_Format,1.是否为空  2.是否和所选的列序号类型一致
+    
+    If dic_ColChain_Format.Count = 0 Then
+    '异常：字典无元素
+        Stop
+        End
+    End If
+    
+    For Each strColIndexChain In dic_ColChain_Format.keys
+        If strColIndexChain = "" Then
+        '参数不应该为空
+        Stop
+        End
+        End If
+        'rngColStr最终放到Range的多列参数字符串
+        '把strColIndexChain根据colIndexType类型，转换为range最终接受的字符串参数。ConvertSheetColIndexChainToRngVarStr
+        rngColStr = ConvertSheetColIndexChainToRngVarStr(colIndexType, strColIndexChain)
+        sht.Range(rngColStr).NumberFormatLocal = (dic_ColChain_Format(strColIndexChain))
+    Next strColIndexChain
+    
+End Sub
+设置Range区域的多列，应用相同的单元格格式
+'Range必须为连续区域
+Sub SetRangeColumnFormat(ByVal rng As Range, ByVal colIndexType As RangeColumnIndexType, _
+ByVal strColIndexChain As String, ByVal strFormat As String)
+    '判断rng是否连续区域,只接受不接收range(A1:G100)这种地址，不接收range("A1:D100,D1:G100")这种参数。虽然实际上也是连续区域，但是算作两个area，获取地址的话也是获取到两个区域的地址。
+    If rng.Areas.Count > 1 Then
+        Stop
+        End
+    End If
+    
+    If Not (colIndexType <> RangeColumnIndexType_RelativeInRange Or _
+    colIndexType <> RangeColumnIndexType_SheetColumnNumber Or _
+    colIndexType <> RangeColumnIndexType_SheetColumnLetter) Then
+        '枚举参数超出枚举范围
+        Stop
+        End
+    End If
+    'rngColStr最终放到Range的多列参数字符串
+    ' 把strColIndexChain根据colIndexType类型，转换为range最终接受的字符串参数。ConvertSheetColIndexChainToRngVarStr
+    rngColStr = ConvertRangeColIndexChainToRngVarStr(rng, colIndexType, strColIndexChain)
+    rng.Worksheet.Range(rngColStr).NumberFormatLocal = (strFormat)
+
+End Sub
+
+Range辅助处理函数(辅助SetRangeColumnFormat)。把strColIndexChain根据colIndexType类型，转换为range最终接受的字符串参数
+Function ConvertRangeColIndexChainToRngVarStr(ByVal rng As Range, ByVal colIndexType As RangeColumnIndexType, _
+ByVal strColIndexChain As String)
+    'strColIndexChain字符串去除多余空格
+    strColIndexChain = Replace(strColIndexChain, " ", "")
+    '检查是否加入了中文版逗号和分号
+    If InStr(strColIndexChain, "：") > 0 Or InStr(strColIndexChain, "，") > 0 Then
+    '检测到有中文逗号或者分号
+        Stop
+        End
+    End If
+    'TODO检查不同colIndexType情况下，是否有其他符号存在，有则发出异常
+    
+    'TODO检查不同colIndexType情况下,colChain除了逗号分号，是否只留下数字或者只留下字母，以此防止colIndexType和colChain不一致
+    
+    '获取range的开始行和结束行在Sheet里的行号
+    'rng.row获取range的第一行所在的行号，所有area最小的行号，不管range里有多少个area
+    startRow = rng.row
+    endRow = rng.row + rng.Rows.Count - 1
+    startSheetCol = rng.Column
+    endSheetCol = rng.Column + rng.Columns.Count - 1
+    
+    '计算range相对表格第一列横向偏移多少，判断RangeColumnIndexType_RelativeInRange情况时用到
+    SheetOriginCol = 1
+    rngStartSheetCol = rng.Column
+    rngColOffset = rngStartSheetCol - SheetOriginCol
+
+    '=================检查strColIndexChain的最大最小序号是否超过range范围-Start====================
+    '设定一个colChain的最大和最小表列Sheet数字序号，如果统计得到的最大最小列序号超过range的范围，则发出异常
+
+     If colIndexType = RangeColumnIndexType_RelativeInRange Then
+        strColIndexChainWithComma = Replace(strColIndexChain, ":", ",")
+        tmpMaxCol = 0
+        tmpMinCol = 0
+        tmpColStrArr = Split(strColIndexChainWithComma, ",")
+        For i = LBound(tmpColStrArr) To UBound(tmpColStrArr)
+            intTmpCol = Val(tmpColStrArr(i))
+            If i = LBound(tmpColStrArr) Then
+                tmpMaxCol = intTmpCol
+                tmpMinCol = intTmpCol
+            Else
+                If tmpMaxCol < intTmpCol Then
+                    tmpMaxCol = intTmpCol
+                End If
+                If tmpMinCol > intTmpCol Then
+                    tmpMinCol = intTmpCol
+                End If
+                
+            End If
+        Next i
+        '
+        If tmpMinCol < 1 Or tmpMaxCol > rng.Columns.Count Then
+        'colChain的列号超出参数range的范围
+            Stop
+            End
+        End If
+     ElseIf colIndexType = RangeColumnIndexType_SheetColumnNumber Then
+'        colChainMaxSheetColIndex = 0
+'        colChainMinSheetColIndex = 0
+        strColIndexChainWithComma = Replace(strColIndexChain, ":", ",")
+        tmpMaxCol = 0
+        tmpMinCol = 0
+        tmpColStrArr = Split(strColIndexChainWithComma, ",")
+        For i = LBound(tmpColStrArr) To UBound(tmpColStrArr)
+            intTmpCol = Val(tmpColStrArr(i))
+            If i = LBound(tmpColStrArr) Then
+                tmpMaxCol = intTmpCol
+                tmpMinCol = intTmpCol
+            Else
+                If tmpMaxCol < intTmpCol Then
+                    tmpMaxCol = intTmpCol
+                End If
+                If tmpMinCol > intTmpCol Then
+                    tmpMinCol = intTmpCol
+                End If
+                
+            End If
+        Next i
+        '
+        If tmpMinCol < startSheetCol Or tmpMaxCol > endSheetCol Then
+        'colChain的列号超出参数range的范围
+            Stop
+            End
+        End If
+     ElseIf colIndexType = RangeColumnIndexType_SheetColumnLetter Then
+        strColIndexChainWithComma = Replace(strColIndexChain, ":", ",")
+        tmpMaxCol = 0
+        tmpMinCol = 0
+        tmpColStrArr = Split(strColIndexChainWithComma, ",")
+        For i = LBound(tmpColStrArr) To UBound(tmpColStrArr)
+             '字母转列号
+            intTmpCol = Range("a1:" & tmpColStrArr(i) & "1").Cells.Count
+            If i = LBound(tmpColStrArr) Then
+                tmpMaxCol = intTmpCol
+                tmpMinCol = intTmpCol
+            Else
+                If tmpMaxCol < intTmpCol Then
+                    tmpMaxCol = intTmpCol
+                End If
+                If tmpMinCol > intTmpCol Then
+                    tmpMinCol = intTmpCol
+                End If
+                
+            End If
+        Next i
+        '
+        If tmpMinCol < startSheetCol Or tmpMaxCol > endSheetCol Then
+        'colChain的列号超出参数range的范围
+            Stop
+            End
+        End If
+     End If
+    '=================检查strColIndexChain的最大最小序号是否超过range范围-End====================
+    
+    'rngColStr最终放到Range的多列参数字符串
+    rngColStr = ""
+    'Range内部从1开始的相对数字序号类型
+    If colIndexType = RangeColumnIndexType_RelativeInRange Then
+        subColStrArr = Split(strColIndexChain, ",")
+ 
+        For Each subColStr In subColStrArr
+            If subColStr <> "" Then
+                tmpStr = ""
+                If InStr(subColStr, ":") Then
+                    '列号转字母 =Replace(Cells(1, num).Address(False, False), "1", "")
+                    '判断是不是数字，不是则发出异常
+                    If (IsNumeric(Split(subColStr, ":")(0)) And IsNumeric(Split(subColStr, ":")(1))) = False Then
+                        Stop
+                        End
+                    End If
+                    tmpStr = Replace(Cells(1, rngColOffset + Val(Split(subColStr, ":")(0))).Address(False, False), "1", "") & startRow & ":" _
+                    & Replace(Cells(1, rngColOffset + Val(Split(subColStr, ":")(1))).Address(False, False), "1", "") & endRow
+                Else
+                    '列号转字母 =Replace(Cells(1, num).Address(False, False), "1", "")
+                    '判断是不是数字，不是则发出异常
+                    If IsNumeric(subColStr) = False Then
+                        Stop
+                        End
+                    End If
+                    tmpStr = Replace(Cells(1, rngColOffset + Val(subColStr)).Address(False, False), "1", "") & startRow & ":" _
+                    & Replace(Cells(1, rngColOffset + Val(subColStr)).Address(False, False), "1", "") & endRow
+                End If
+                If rngColStr = "" Then
+                    rngColStr = tmpStr
+                Else
+                    rngColStr = rngColStr + "," + tmpStr
+                End If
+            End If
+        Next subColStr
+    End If
+    
+    'sheet数字列号序号类型
+    If colIndexType = RangeColumnIndexType_SheetColumnNumber Then
+        subColStrArr = Split(strColIndexChain, ",")
+        For Each subColStr In subColStrArr
+            If subColStr <> "" Then
+                tmpStr = ""
+                If InStr(subColStr, ":") Then
+                    '判断是不是数字，不是则发出异常
+                    
+                    If ((IsNumeric(Split(subColStr, ":")(0)) And IsNumeric(Split(subColStr, ":")(1)))) = False Then
+                     '应该为数字
+                        Stop
+                        End
+                    End If
+                    tmpStr = Replace(Cells(1, Val(Split(subColStr, ":")(0))).Address(False, False), "1", "") & startRow & ":" _
+                    & Replace(Cells(1, Val(Split(subColStr, ":")(1))).Address(False, False), "1", "") & endRow
+                Else
+                   If IsNumeric(subColStr) = False Then
+                   '应该为数字
+                        Stop
+                        End
+                    End If
+                    '列号转字母 =Replace(Cells(1, num).Address(False, False), "1", "")
+                    tmpStr = Replace(Cells(1, Val(subColStr)).Address(False, False), "1", "") & startRow & ":" _
+                    & Replace(Cells(1, Val(subColStr)).Address(False, False), "1", "") & endRow
+                End If
+                If rngColStr = "" Then
+                    rngColStr = tmpStr
+                Else
+                    rngColStr = rngColStr + "," + tmpStr
+                End If
+            End If
+        Next subColStr
+    End If
+        'sheet字母列号序号类型
+    If colIndexType = RangeColumnIndexType_SheetColumnLetter Then
+        subColStrArr = Split(strColIndexChain, ",")
+        For Each subColStr In subColStrArr
+            If subColStr <> "" Then
+                tmpStr = ""
+                If InStr(subColStr, ":") Then
+                    '判断是不是数字，是则发出异常
+                    If (IsNumeric(Split(subColStr, ":")(0)) Or IsNumeric(Split(subColStr, ":")(1))) Then
+                     '不应该为数字
+                        Stop
+                        End
+                    End If
+                    tmpStr = Split(subColStr, ":")(0) & startRow & ":" & Split(subColStr, ":")(1) & endRow
+                Else
+                   If IsNumeric(subColStr) Then
+                   '不应该为数字
+                        Stop
+                        End
+                    End If
+                    tmpStr = subColStr & startRow & ":" & subColStr & endRow
+                End If
+                If rngColStr = "" Then
+                    rngColStr = tmpStr
+                Else
+                    rngColStr = rngColStr + "," + tmpStr
+                End If
+            End If
+        Next subColStr
+    End If
+    
+  ConvertRangeColIndexChainToRngVarStr = rngColStr
+End Function
+设置Range区域某些列整列为文本格式
+Sub SetRangeColumnFormatAsText(ByVal rng As range, ByVal colIndexType As RangeColumnIndexType, _
+ByVal strColIndexChain As String)
+Call SetSheetEntireColumnFormat(sht, colIndexType, strColIndexChain, "@")
+End Sub
+
+设置Range区域某些列整列为数值格式
+Sub SetRangeColumnFormatAsNumber(ByVal rng As range, ByVal colIndexType As RangeColumnIndexType, _
+ByVal strColIndexChain As String)
+Call SetSheetEntireColumnFormat(sht, colIndexType, strColIndexChain, "0.00")
+End Sub
+
+设置Range区域的多列各自整列的单元格格式，使用各自列的格式字典
+Dim formatDic As Object
+Set formatDic = CreateObject("scripting.dictionary")
+formatDic.Add "1,3,5:7", "@"
+formatDic.Add "2,10", "0.00%"
+Sub SetRangeMultiColumnFormatWithVariousConfig(ByVal rng As Range, _
+ByVal colIndexType As SheetColumnIndexType, _
+ByVal dic_ColChain_Format As Object)
+    '检查参数状态
+    'TODO检查colIndexType是否在枚举应有的范围内
+    '检查dic_ColChain_Format,1.是否为空  2.是否和所选的列序号类型一致
+    
+    If dic_ColChain_Format.Count = 0 Then
+    '异常：字典无元素
+        Stop
+        End
+    End If
+    
+    For Each strColIndexChain In dic_ColChain_Format.keys
+        If strColIndexChain = "" Then
+        '参数不应该为空
+        Stop
+        End
+        End If
+        'rngColStr最终放到Range的多列参数字符串
+        '把strColIndexChain根据colIndexType类型，转换为range最终接受的字符串参数。ConvertSheetColIndexChainToRngVarStr
+        rngColStr = ConvertRangeColIndexChainToRngVarStr(rng, colIndexType, strColIndexChain)
+        rng.Worksheet.Range(rngColStr).NumberFormatLocal = (dic_ColChain_Format(strColIndexChain))
+    Next strColIndexChain
+    
+End Sub
+
+
+
+Range匹配
+TODO Svlookup_Range
+
+ADO
+
+Array
+基本属性
+一维数组元素个数
+'arr必须为一维数组
+Function Get1DArrayLength(ByVal arr As Variant)
+'先判断是不是数组
+    If IsArray(arr) = False Then
+        '如果arr不是数组，则发出异常
+        Stop
+        End
+    End If
+    If nDim(arr) <> 1 Then
+        '如果arr不是一维数组，则发出异常
+        Stop
+        End
+    End If
+    Get1DArrayLength = UBound(arr, 1) - LBound(arr, 1) + 1
+End Function
+二维数组尺寸（行列元素个数）
+GetArraySize，返回行列元素count的数组（rowCount,colCount），如果是一维数组则返回(colCount,0)
+Function GetArraySize(ByVal arr As Variant)
+'先判断是不是数组
+    If IsArray(arr) = False Then
+        '如果arr不是数组，则发出异常
+        Stop
+        End
+    End If
+    If nDim(arr) = 1 Then
+        GetArraySize = Array(UBound(arr, 1) - LBound(arr, 1) + 1, 0)
+        Exit Function
+    ElseIf nDim(arr) = 2 Then
+        GetArraySize = Array(UBound(arr, 1) - LBound(arr, 1) + 1, UBound(arr, 2) - LBound(arr, 2) + 1)
+        Exit Function
+    Else
+        'arr参数非一维二维数组，发出异常
+        Stop
+        End
+    End If
+End Function
+
+'二维数组
+'二维数组行数
+Function Get2DArrayRowCount(ByVal theArray As Variant)
+Get2DArrayRowCount = UBound(theArray, 1) - LBound(theArray, 1) + 1
+End Function
+'二维数组列数
+Function Get2DArrayColumnCount(ByVal theArray As Variant)
+Get2DArrayColumnCount = UBound(theArray, 2) - LBound(theArray, 2) + 1
+End Function
+
+’数组元素个数
+
+
+TODO 是否为空
+判断二维数组的下限BaseNum是否一致
+Function ifRowColBaseNumTheSame(ByVal arr As Variant) As Boolean
+    If IsArray(arr) = False Then
+        '检测到非数组参数
+        Stop
+    End
+    End If
+    If nDim(arr) <> 2 Then
+    '检测到非2维数组
+        Stop
+        End
+    End If
+   ifRowColBaseNumTheSame = LBound(arr, 1) = LBound(arr, 2)
+End Function
+函数内部常用：检查参数是否为空数组和是否为二维数组
+Function is2DArray(ByVal arr As Variant) As Boolean
+   is2DArray = IsArray(arr) And (nDim(arr) = 2)
+End Function
+函数内部常用：检查参数是否为空数组和是否为一维数组
+Function is1DArray(ByVal arr As Variant) As Boolean
+   Is1DArray = IsArray(arr) And (nDim(arr) = 1)
+End Function
+调整数组的下限BaseNum为一致
+Function ArrayResetBaseNum(ByVal arr As Variant, ByVal baseNum As Long)
+    If IsArray(arr) = False Then
+        '检测到非数组参数
+        Stop
+    End
+    End If
+    If nDim(arr) > 2 Then
+    '检测到n>2维数组,本函数不支持大于二维的数组
+        Stop
+        End
+    End If
+    Dim tmpArr() As Variant
+    If nDim(arr) = 1 Then
+    '检测到1维数组
+        ReDim tmpArr(baseNum To baseNum + UBound(arr) - LBound(arr))
+        arrIndexOffset = baseNum - LBound(arr)
+        For i = LBound(arr) To UBound(arr)
+            tmpArr(i + arrIndexOffset) = arr(i)
+        Next i
+    End If
+    If nDim(arr) = 2 Then
+    '检测到2维数组
+        ReDim tmpArr(baseNum To baseNum + UBound(arr, 1) - LBound(arr, 1), baseNum To baseNum + UBound(arr, 2) - LBound(arr, 2))
+        arrRowIndexOffset = baseNum - LBound(arr, 1)
+        arrColIndexOffset = baseNum - LBound(arr, 2)
+        For i = LBound(arr, 1) To UBound(arr, 1)
+            For j = LBound(arr, 2) To UBound(arr, 2)
+                tmpArr(i + arrRowIndexOffset, j + arrColIndexOffset) = arr(i, j)
+            Next j
+        Next i
+    End If
+    ArrayResetBaseNum = tmpArr
+End Function
+基于某base计算出现有数组修改下限开始数字后该有的上限
+'二维
+Function Get2DArrayUboundByNewBaseNum(ByVal arr As Variant, ByVal newBaseNum As Long)
+    newBaseRowIndexOffset = newBaseNum - LBound(arr, 1)
+    newBaseColIndexOffset = newBaseNum - LBound(arr, 2)
+    Get2DArraySizeByNewBaseNum = Array(UBound(arr, 1) + newBaseRowIndexOffset, UBound(arr, 2) + newBaseColIndexOffset)
+End Function 
+
+
+
+计算数组维度
+黄色底色代表网摘验证通过
+Private Function nDim(ByVal vArray As Variant) As Long
+' Purpose: get array dimension (MS)
+Dim dimnum     As Long
+Dim ErrorCheck As Long    ' OP: As Variant
+On Error GoTo FinalDimension
+
+For dimnum = 1 To 60000    ' 60000 being the absolute dimensions limitation
+    ErrorCheck = LBound(vArray, dimnum)
+Next
+' It's good use to formally exit a procedure before error handling
+' (though theoretically this wouldn't needed in this special case - see comment)
+Exit Function
+
+FinalDimension:
+nDim = dimnum - 1
+
+End Function
+
+复制
+复制一个一模一样的数组
+‘深度复制，可以设置lboundBase 下限开始数字，函数内依赖其他函数计算数组维度，如果想要跟参数数组下标下限一致，那么传入lbound(原数组)作为参数
+Function DeepCopyArray(ByVal arr As Variant, Optional lboundBase As Variant) As Variant
+    If IsArray(arr) = False Then
+        '检测到非数组参数
+        Stop
+        End
+    End If
+    
+    If IsMissing(lboundBase) Then
+        lboundBase = LBound(arr)
+    End If
+    
+    Dim tmpArr() As Variant
+    arrDimention = nDim(arr)
+    '一维
+    If arrDimention = 1 Then
+        tmpArrCount = 0
+        '计算一维数组元素个数
+        arrCount = UBound(arr, 1) - LBound(arr, 1) + 1
+        ReDim tmpArr(lboundBase To lboundBase + arrCount - 1)
+        '计算下标差异偏移
+        indexOffset = UBound(tmpArr, 1) - UBound(arr, 1)
+         
+        For i = LBound(arr, 1) To UBound(arr, 1)
+            tmpArr(i + indexOffset) = arr(i)
+        Next i
+        DeepCopyArray = tmpArr
+        Exit Function
+    End If
+    
+    '二维
+    If arrDimention = 2 Then
+        
+        tmpArrRowCount = 0
+        tmpArrColCount = 0
+        '计算数组行元素个数
+        arrRowCount = UBound(arr, 1) - LBound(arr, 1) + 1
+        arrColCount = UBound(arr, 2) - LBound(arr, 2) + 1
+        ReDim tmpArr(lboundBase To lboundBase + arrRowCount - 1, lboundBase To lboundBase + arrColCount - 1)
+        '计算下标差异偏移
+        rowIndexOffset = UBound(tmpArr, 1) - UBound(arr, 1)
+        colIndexOffset = UBound(tmpArr, 2) - UBound(arr, 2)
+        For i = LBound(arr, 1) To UBound(arr, 1)
+            For j = LBound(arr, 2) To UBound(arr, 2)
+                tmpArr(i + rowIndexOffset, j + colIndexOffset) = arr(i, j)
+            Next j
+        Next i
+        DeepCopyArray = tmpArr
+        Exit Function
+    End If
+    
+    If arrDimention > 2 Then
+    '不支持大于2维度的数组
+    Stop
+    End
+    End If
+   
+End Function
+生成一个相同行列的空数组 
+如果想要跟参数数组下标下限一致，那么传入lbound(原数组)作为参数
+在现成的Function CreateEmptyArray函数里传入数组的长宽和index下限
+生成空二维数组
+Function CreateEmptyArray(ByVal rowCount As Long, ByVal colCount As Long, Optional baseNum As Variant)
+'创建新数组
+    Dim resultArr() As Variant
+    ReDim resultArr(baseNum To baseNum + rowCount - 1, baseNum To baseNum + colCount - 1)
+    CreateEmptyArray = resultArr
+End Function
+
+扩
+生成一个比原来数组增加空行列的数组（考虑要不要搞一个新fields参数）
+上下左右（中间），增加N行或列。输出结果数组的下限BaseNum和原数组一致。如果想要下标从1开始的数组，可以用自定义的ArrayResetBaseNum函数改变BaseNum。
+Function CreateaExpandArray(ByVal arr As Variant, ByVal addTopCount As Long, ByVal addBottomCount As Long, ByVal addLeftCount As Long, ByVal addRightCount As Long)
+    addVerticalCount = addTopCount + addBottomCount
+    addHorizonCount = addLeftCount + addRightCount
+    
+    If IsArray(arr) = False Then
+        '检测到非数组参数
+        Stop
+        End
+    End If
+    
+    arrDimention = nDim(arr)
+    
+    '一维
+    If arrDimention = 1 Then
+        '提示先用函数转换为二维
+        Stop
+        End
+    
+    End If
+    
+    '二维
+    If arrDimention = 2 Then
+
+        '计算数组行列元素个数
+        arrRowCount = UBound(arr, 1) - LBound(arr, 1) + 1
+        arrColCount = UBound(arr, 2) - LBound(arr, 2) + 1
+        
+        Dim resultArr() As Variant
+        ReDim resultArr(LBound(arr, 1) To UBound(arr, 1) + addVerticalCount, LBound(arr, 2) To UBound(arr, 2) + addHorizonCount)
+        
+        '把数据源数组粘贴到新数组
+        For i = LBound(arr, 1) To UBound(arr, 1)
+            For j = LBound(arr, 2) To UBound(arr, 2)
+                resultArr(i + addTopCount, j + addLeftCount) = arr(i, j)
+            Next j
+        Next i
+        CreateaExpandArray = resultArr
+        Exit Function
+    End If
+    
+    If arrDimention > 2 Then
+    '不支持大于2维度的数组
+    Stop
+    End
+    End If
+End Function
+
+TODO数组辅助列
+TODO 生成一列等差数列单列二维数组，参数带不带Field
+CreateSingleColumnArrOfIndexNum(startNum,rowCount,stepNum,optional fieldStr)
+TODO给数组加一列Field和填充行号，行号来自数组的baseNum开始的行号（看数组有没有Field），
+ArrayAdd
+TODO缩
+TODO定位
+TODOTODO 一维数组定位元素
+indexOf
+
+TODO删除
+TODO删除顶部前N行
+
+TODO清空
+TODO清空某列
+TODO清空某些列
+TODO清空某行
+TODO清空某些行
+TODO清空顶部前N行
+
+TODO切割
+TODO截取
+
+TODO去掉或截取最后几行，几列
+TODO取整列或整行
+GetArrayEntireColumnData()
+
+TODO调换
+统一格式
+TODO整行或整列
+TODO某些行某些列
+
+其他变形
+一维转二维（数据不变）
+Function Arr1DTo2D(arr)
+    If IsArray(arr) = False Then
+        '检测到非数组参数
+        Stop
+    End
+    End If
+    '获得维度
+    arrDimention = nDim(arr)
+    If arrDimention > 1 Then
+        '数组维数大于1，规定只能是1
+        Stop
+        End
+        
+    End If
+    Dim resultArr() As Variant
+    ReDim resultArr(LBound(arr) To LBound(arr), LBound(arr) To UBound(arr))
+    
+    For i = LBound(arr) To UBound(arr)
+        resultArr(LBound(arr), i) = arr(i)
+    Next i
+    Arr1DTo2D = resultArr
+End Function
+
+TODO二维数组转一维
+按列拼接，按行拼接
+TODO只有一行的二维转一维
+‘还没完成
+Function SingleLineArr2DTo1D(ByVal arr As Variant, Optional baseNum As Variant)
+'判断为维度
+
+If nDim(arr) <> 2 Then
+    '检测到参数非二维数组
+    Stop
+    End
+End If
+
+'判断是否是单行
+If UBound(arr, 1) <> LBound(arr, 1) Then
+    '检测到参数非单行数组
+    Stop
+    End
+End If
+
+If IsMissing(baseNum) Then
+baseNum = 0
+End If
+Dim resultArr() As Variant
+ReDim resultArr(baseNum To baseNum + UBound(arr, 2) - LBound(arr, 2))
+'数组粘贴到数组
+'/////TODO
+
+
+SingleLineArr2DTo1D = resultArr
+End Function
+
+TODO 多行多列数组转单行单列数组
+向下和向右改变Array的尺寸
+ResizeArray，也就是Redim Preserve
+Function ResizeArray(ByVal arr As Variant, ByVal newRow As Long, ByVal newCol As Long)
+'TODO判断维度
+'判断新行列数是否比原有的小
+'二维
+    arrRowCount = UBound(arr, 1) - LBound(arr, 1) + 1
+    arrColCount = UBound(arr, 2) - LBound(arr, 2) + 1
+    
+    Dim resultArr() As Variant
+    ReDim resultArr(LBound(arr, 1) To LBound(arr, 1) + newRow - 1, LBound(arr, 2) To LBound(arr, 2) + newCol - 1)
+    '此处用粘贴数组到数组或者重新写粘贴代码
+    For i = LBound(arr, 1) To UBound(arr, 1)
+        For j = LBound(arr, 2) To UBound(arr, 2)
+            resultArr(i, j) = arr(i, j)
+        Next j
+    Next i
+    ResizeArray = resultArr
+End Function
+
+转换成其他基本数据类型（如集合字典等等）
+数组转集合
+'================================
+' VBA数组转换到集合ArrayToCollection
+'
+' http://www.cnhup.com
+'================================
+ 
+Public Function ArrayToCollection( _
+  Arr As Variant, ByRef Coll As Collection) _
+  As Boolean
+    Dim Ndx As Long
+    Dim KeyVal As String
+     
+    If IsArray(Arr) = False Then
+        ArrayToCollection = False
+        Exit Function
+    End If
+    On Error GoTo ErrH:
+    Select Case NumberOfArrayDimensions(Arr:=Arr)
+        Case 0
+            ArrayToCollection = False
+            Exit Function
+        Case 1
+            For Ndx = LBound(Arr) To UBound(Arr)
+                Coll.Add Item:=Arr(Ndx)
+            Next Ndx
+        Case 2
+            For Ndx = LBound(Arr, 1) To UBound(Arr, 1)
+                KeyVal = Arr(Ndx, 1)
+                If Trim(KeyVal) = vbNullString Then
+                    Coll.Add Item:=Arr(Ndx, 1)
+                Else
+                    Coll.Add Item:=Arr(Ndx, 0), Key:=KeyVal
+                End If
+            Next Ndx
+        Case Else
+            ArrayToCollection = False
+            Exit Function
+    End Select
+    ArrayToCollection = True
+    Exit Function
+ErrH:
+        ArrayToCollection = False
+ End Function
+
+集合转数组
+'================================
+' VBA集合转换到数组CollectionToArray
+'
+' http://www.cnhup.com
+'================================
+ 
+Public Function CollectionToArray( _
+  Coll As Collection, Arr As Variant) _
+  As Boolean
+    Dim V As Variant
+    Dim Ndx As Long
+    If Coll Is Nothing Then
+        CollectionToArray = False
+        Exit Function
+    End If
+    If IsArray(Arr) = False Then
+        CollectionToArray = False
+        Exit Function
+    End If
+    If IsArrayDynamic(Arr:=Arr) = False Then
+        CollectionToArray = False
+        Exit Function
+    End If
+    If Coll.Count < 1 Then
+        CollectionToArray = False
+        Exit Function
+    End If
+    ReDim Arr(1 To Coll.Count)
+    For Ndx = 1 To Coll.Count
+        If IsObject(Coll(Ndx)) = True Then
+            Set Arr(Ndx) = Coll(Ndx)
+        Else
+            Arr(Ndx) = Coll(Ndx)
+        End If
+    Next Ndx
+    CollectionToArray = True
+End Function
+
+数组元素增减
+TODO一维数组增加元素append
+TODO一维数组删除元素
+TODO一维数组删除前N个元素
+TODO一维数组删除后N个元素
+TODO一维数组元素定位  indexOf
+
+
+
+
+Arr与Arr
+TODO创建空数组，并安排另一个数组的某些列填到新数组的某些列
+
+'用到了Dictionary，需要前期绑定
+Public Function CreateArrayWithSourceArrayCol( _
+ByVal resultArrRowCount As Long, _
+ByVal resultArrColCount As Long, _
+ByVal resultArrBaseNum As Long, _
+ByVal sourceArray As Variant, _
+ByVal srcArrColIndexType As ArrayColumnIndexType, _
+ByVal dic_DesCol_SrcCol As Variant) '生成的数组base 1开始
+    
+    Dim resultArr() As Variant
+    ReDim resultArr(baseNum To baseNum + resultArrRowCount - 1, baseNum To baseNum + resultArrColCount - 1)
+    
+    For Each desCol In dic_DesCol_SrcCol.keys
+        
+    
+    Next
+    
+
+CreateArrayWithSourceArrayCol = 1
+
+End Function
+
+
+
+TODO创建空数组，并安排另一个或几个数组的某些列填到新数组的某些列
+Create
+TODO创建空数组，并安排另一个数组的某些列填到新数组的某些列，或者根据数组，EachRow字典，range来源匹配
+
+
+TODO让有数据的数组像粘贴到range左上角第一个单元格一样粘贴到另一个数组里（考虑不考虑边界自动扩充的问题）
+Function PasteArrayAtArray(ByVal fromArr As Variant, ByVal toArr As Variant, _
+ByVal fromArrIndexType As ArrayIndexType, _
+ByVal toArrIndexType As ArrayIndexType, _
+ByVal pasteOnToArrRowIndex As Long, _
+ByVal pasteOnToArrColIndex As Long)
+    
+'计算两种index的offset
+eleCountIndex = 1 - LBound(fromArr)
+End Function
+数组拼接
+TODO堆叠多个数组（垂直vstack，水平hstack）
+垂直vstack
+TODO:考虑要不要拼接的时候允许偏移，并且是否允许自动扩展，如果行数列数不够的话
+Function ArrayVStack(ByVal arr1 As Variant, ByVal arr2 As Variant, ByVal baseNum As Long)
+    '判断是否是数组
+    '判断数组维度
+    '一维的话要不要转为二维还是弹出提示
+      
+  '检查两个数组的行数列数各自的下限数字是否一致
+‘todo
+    '以下是二维数组的处理
+    arr1_RowCount = UBound(arr1, 1) - LBound(arr1, 1) + 1
+    arr1_ColCount = UBound(arr1, 2) - LBound(arr1, 2) + 1
+    arr2_RowCount = UBound(arr2, 1) - LBound(arr2, 1) + 1
+    arr2_ColCount = UBound(arr2, 2) - LBound(arr2, 2) + 1
+    '判断两个数组的列数是否一致，不一致退出
+    If arr1_ColCount <> arr2_ColCount Then
+        '两个数组列数不一致，程序停止
+        Stop
+        End
+    End If
+    '如果两个数组列数一致
+    Dim resultArr() As Variant
+    indexOffset = baseNum - LBound(arr1, 1)
+    ReDim resultArr(baseNum To baseNum + arr1_RowCount + arr2_RowCount - 1, baseNum To baseNum + arr1_ColCount - 1)
+    '复制arr1
+    For i = LBound(arr1, 1) To UBound(arr1, 1)
+        For j = LBound(arr1, 2) To UBound(arr1, 2)
+            resultArr(i + indexOffset, j + indexOffset) = arr1(i, j)
+
+        Next j
+    Next i
+    '复制arr2
+    For i = LBound(arr2, 1) To UBound(arr2, 1)
+        For j = LBound(arr1, 2) To UBound(arr1, 2)
+            resultArr(i + arr1_RowCount + indexOffset, j + indexOffset) = arr2(i, j)
+        Next j
+    Next i
+    ArrayVStack = resultArr
+End Function
+
+TODO 水平hstack
+数组比较
+TODO数组元素相减（集合相减）？交集？
+匹配
+
+TODO Svlookup_Array
+
+
+TODO提供一个数组A，选定某列作为key，选择另一个区域或数组B，选定列作为key，选择B的某列填充到数组A
+
+数组，某列为key，key是否区分大小写，
+某数据源：
+- Dic_EachRow: 
+三层key-value,
+二层key-value(key-vlaue,key-value)
+三层
+- 数组某列为Key，某列为Value
+
+														  
+TODO根据给定的Field名和顺序，从Dic_EachRow生成数组
+
+场景：
+TODO匹配In
+TODO匹配Out
+
+TODO按行处理：
+Join
+TODO按多行处理：
+Join
+
+
+TODO按列处理：
+TODO对数组某列进行lcase 和ucase设置
+
+TODO按多列处理：
+
+
+TODO对所有元素进行处理：
+TODO对数组所有元素进行lcase和ucase设置
+ArrayLcase(arr)
+ArrayUcase(arr)
+
+
+TODO判断和修改
+增删查改，批量修改，
+判断整列
+判断整行
+判断多行
+判断多列
+判断全部
+
+TODO统计
+1.临时表里sql统计
+2.常见统计：
+按列，按行，按整个区域
+最大，最小
+Function ArrayMax(ByVal arr As Variant, ByVal autoConvertNumStrToInt As Boolean)
+    
+    maxNum = 0
+    If IsArray(arr) = False Then
+        '检测到非数组参数
+        Stop
+    End
+    '判断数组是否为空
+    
+    
+    If nDim(arr) = 1 Then
+        
+        For i = LBound(arr) To UBound(arr)
+            If i = LBound(arr) Then
+                maxNum = arr(i)
+            Else
+                If maxNum < arr(i) Then
+                    maxNum = arr(i)
+                End If
+            End If
+            
+        Next i
+    ElseIf nDim(arr) = 2 Then
+        
+    Else
+            '检测到n>2维数组,本函数不支持大于二维的数组
+        Stop
+        End
+    End If
+    
+
+End Function
+
+取唯一：
+接受数组类型：一维数组，只有一行的二维数组，只有一列的二维数组，多行多列的二维数组指定某行或某列
+参数要求：compare模式，二进制（如数字字符串和数字比较），字符串比较（大小写）
+
+TODO数组一对多查找，数组一对多展开，填充纵向
+
+DataFrame结构
+Array To Range
+
+Field可以2行以上
+
+框架参考
+numpy和pandas框架
+与其他数据类型的互动
+数据表range与数组
+
+range设定每个range行或列的数据格式，采用text的格式数组然后读取应用
+考虑列序号，连续列的设置，用字符串当做参数，还是数组
+先做最繁琐的，然后做简便的作为衍生函数
+各自列有各自的格式
+
+‘数组作为参数
+SetRangeColumnNumberFormat(Column模式, 相对列号数组/表列号数字数组/列号字母数组/列号数字字母混合数组，格式数组)
+‘字符串作为参数（可以便捷填写连续的位置）
+- 衍生 SetRangeColumnNumberFormat(Column模式, 按自定义格式写字符串，格式数组)
+
+
+SetSheetColumnNumberFormat(byval sht as worksheet,byval colArr as variant,a)
+
+粘贴数组到某单元格开始的区域，返回边界粘贴后的边界array(左上角单元格行，列，右下角单元格行，列)
+Function PasteArrayAtCell(ByVal arr As Variant, ByVal cel As Range) As Variant '返回边界粘贴后的边界array(左上角单元格行，列，右下角单元格行，列)
+    '判断arr是不是数组
+    If Not IsArray(arr) Then
+    'arr不是数组
+        Stop
+        End
+    End If
+    'TODO
+    '判断arr维度
+    If nDim(arr) <> 2 Then
+        'arr维数不是2
+        Stop
+        End
+    End If
+    arr_rowCount = UBound(arr, 1) - LBound(arr, 1) + 1
+    arr_colCount = UBound(arr, 2) - LBound(arr, 2) + 1
+    cel.Resize(arr_rowCount, arr_colCount) = arr
+    PasteArrayAtCell = Array(cel.row, cel.Column, cel.row + arr_rowCount - 1, cel.Column + arr_colCount - 1)
+End Function
+TODO 数组粘贴到range的左上角第一个单元格
+
+TODO 区域先设定格式再粘贴数组 pasteArrOnRangeWithFormat(range,arr,formatArray)
+
+集合与数组
+TODO集合转换到数组CollectionToArray
+TODO数组转换到集合ArrayToCollection
+
+集合
+基本属性
+集合对比
+
+
+
+字符串
+'截取两字符串中间部分
+Public Function GetStringBetweenAandB(ByVal originString As String, ByVal stringA As String, ByVal stringB As String, ByVal isIncludingA As Boolean, ByVal isincludingB As Boolean)
+      GetStringBetweenAandB= strBeforeA(strAfterA(originString, stringA, isIncludingA), stringB, isincludingB)
+End Function
+
+'某字符串前
+Public Function StrBeforeA(ByVal originString As String, ByVal targetAString As String, ByVal isIncludingTargetString As Boolean)
+    If InStr(originString, targetAString) = 0 Then
+        strBeforeA = ""
+        Exit Function
+    End If
+    If isIncludingTargetString Then
+        result = Left(originString, InStr(originString, targetAString) - 1)
+        result = result + targetAString
+    Else
+        result = Left(originString, InStr(originString, targetAString) - 1)
+    End If
+    strBeforeA = result
+End Function
+
+'某字符串后
+Public Function StrAfterA(ByVal originString As String, ByVal targetAString As String, ByVal isIncludingTargetString As Boolean)
+    If InStr(originString, targetAString) = 0 Then
+        strAfterA = ""
+        Exit Function
+    End If
+    If isIncludingTargetString Then
+        result = Right(originString, Len(originString) - InStr(originString, targetAString) + 1)
+    Else
+        result = Right(originString, Len(originString) - InStr(originString, targetAString) - Len(targetAString) + 1)
+    End If
+    strAfterA = result
+End Function
+
+字符串连接多个item
+Function StrWithSepAddItemStr(ByVal addStr As String, ByVal totalStr As String, ByVal sepStr As String)
+    If totalStr = "" Then
+    totalStr = addStr
+    Else
+    totalStr = totalStr + sepStr + addStr
+    End If
+    StrWithSepAddItemStr = totalStr
+End Function
+Sheet
+
+
+
+
+其他
+常用代码封装：判断型isXXXX
+系统自带：
+isArray
+自定义：
+isXXX
+获取value的arr或rng，从不同方法获得：
+规范的sheet，一行title
+某range，n行title，N行左title，n行右title，n行底title
+特殊:某range,n行title
+某range,无title
+
+目录和文件操作
+'@功能:判断文件夹或者文件是否存在
+'@AUTHOR: 
+'@DIM:
+'@EXAMPLE: 
+'@注意：strPathName="C:\abcd"和“C:\abcd\”都可以
+Function IsPathExists(ByVal strPath As String) As Boolean
+    If Dir(strPath, 16) <> Empty Then
+        IsPathExists= True
+    Else
+        IsPathExists= False
+    End If
+End Function
+
+TODO (功能等替换成其他方案)'@功能:获取某文件夹下的文件列表，可用字符串过滤
+'@AUTHOR: 
+'@DIM:
+'@EXAMPLE: 
+'@注意：只返回文件，不返回子文件夹。
+'@返回值：返回""或者返回数组
+ Function GetFileList(ByVal strDirPath As String, Optional strFilter As String) As Variant
+' 将文件列表放到数组
+    Dim f As String
+    Dim i As Long
+    Dim FileList() As String
+
+    If strFilter = "" Then strFilter = "*.*"
+        Select Case Right(strDirPath , 1)
+            Case "", "/"
+            strPath = Left(strPath, Len(strDirPath ) - 1)
+    End Select
+
+    ReDim Preserve FileList(0)
+    f = Dir(strDirPath & "/" & strFilter)
+    Do While Len(f) > 0
+       ReDim Preserve FileList(i) As String
+       FileList(i) = f
+       i = i + 1
+       f = Dir()
+    Loop
+    If FileList(0) <> Empty Then
+       GetFileList= FileList
+    Else
+       GetFileList= ""
+    End If
+End Function
+
+
+TODO '@功能:获取某文件夹下的文件列表，可用array过滤格式名
+'@功能：判断文件夹是否存在，不存在则创建
+Sub CreateDirIfNotExist(byval dirPath as string)
+ if IsPathExists(dirPath )=false then
+else
+MkDir dirPath 
+endif
+end sub
+
+
+'@功能：'删掉文件夹
+Sub DeleteDirIfExist(ByVal dirPath As String)
+    If Dir(dirPath, 16) <> Empty Then
+    Dim FSO As Object
+    Set FSO = CreateObject("Scripting.FileSystemObject")
+    FSO.GetFolder(dirPath).Delete
+    End If
+End Sub
+
+'@功能：'删掉文件夹再创建
+Sub DeleteAndRecreateDir(ByVal dirPath As String)
+    Dim FSO As Object
+    Set FSO = CreateObject("Scripting.FileSystemObject")
+    If IsPathExists(dirPath) Then
+    FSO.GetFolder(dirPath).Delete
+    MkDir dirPath
+    Else
+    MkDir dirPath
+    End If
+End Sub
+
+'通过文件路径获取文件名
+Function GetFileName(strFilePath As String) As String
+    Dim strFileName As String
+    GetFileName = ""
+    If InStr(1, strFilePath, "\") > 0 Then
+        strFileName = Split(strFilePath, "\")(UBound(Split(strFilePath, "\")))
+        GetFileName = strFileName
+    ElseIf InStr(1, strFilePath, "/") > 0 Then
+        strFileName = Split(strFilePath, "/")(UBound(Split(strFilePath, "/")))
+        GetFileName = strFileName
+    End If
+End Function
+
+
+’弹窗选择文件夹
+
+
+‘弹窗选择单个文件
+
+
+’弹窗选择多个文件
