@@ -1,50 +1,18 @@
-查找	2
-定位	2
-Range	2
-Range to Array	2
-按某range的几个列号（绝对，相对）组成新数组	2
-ADO	2
-Array	3
-基本属性	3
-判断二维数组的下限BaseNum是否一致	3
-函数内部常用：检查参数是否为空数组和是否为二维数组	3
-调整二维数组的下限BaseNum为一致	3
-数组维度	4
-复制	4
-复制一个一模一样的数组	4
-TODO 生成一个相同行列的空数组	6
-生成空数组	6
-扩	6
-缩	6
-定位	6
-删除	6
-清空	6
-取整列或整行	6
-调换	6
-其他变形	6
-二维数组转一维	6
-多行多列数组转单行单列数组	6
-转换成其他基本数据类型（如集合字典等等）	6
-Arr与Arr	8
-让有数据的数组像粘贴到range左上角第一个单元格一样粘贴到另一个数组里（考虑不考虑边界自动扩充的问题）	8
-数组比较	9
-数组元素相减（集合相减）？交集？	9
-场景：	9
-匹配In	9
-匹配Out	9
-按行处理：	9
-按多行处理：	9
-按列处理：	9
-对数组某列进行lcase 和ucase设置	9
-按多列处理：	9
-对所有元素进行处理：	9
-对数组所有元素进行lcase和ucase设置	9
-统计	9
-DataFrame结构	10
-Array To Range	10
-集合	10
-基本属性	10
-集合对比	10
+基本数据类型
+转换数字字符串或者数值到数值
+Function NumberToVal(ByVal numStrOrVal As Variant) As Variant
+    If IsNumeric(numStrOrVal) = False Then
+    '异常：检测到非数字的字符串或数值
+    Stop
+    End
+    End If
+    
+    If TypeName(numStrOrVal) = "String" Then
+    NumberToVal = Val(numStrOrVal)
+    Else
+    NumberToVal = numStrOrVal
+    End If
+End Function
 
 查找
 (4)参数LookIn，可选。指定查找的范围类型，可以为以下常量之一：xlValues、xlFormulas或者xlComments，默认值为xlFormulas。对应于“查找与替换”对话框中，“查找范围”下拉框中的选项。
@@ -86,8 +54,8 @@ Enum
 表格绝对列号字母模式
 Array行列号
 Public Enum ArrayIndexType
-ArrayIndexType_ElementCountIndex = 1
-ArrayIndexType_ArrayNatureBaseIndex = 2
+ArrayIndexType_BaseOneIndex = 1
+ArrayIndexType_ArrayOriginBaseIndex = 2
 End Enum
 Enum
 相对列号模式（1开始）
@@ -109,12 +77,12 @@ Range
 整行偏移ActiveCell.EntireRow.Offset(1, 0).Cells(1).Value = "hello world"
 
 ‘列号转字母
-Function ColumnIntIndexToLetters(ByVal num As Long) As String
-    ColumnIntIndexToLetters = Replace(Cells(1, num).Address(False, False), "1", "")
+Function ColumnIntIndexToLetter(ByVal colNumIndex As Long) As String
+    ColumnIntIndexToLetter = Replace(Cells(1, colNumIndex ).Address(False, False), "1", "")
 End Function
 ‘字母转列号
-Function ColumnLettersToIntIndex(ByVal AB As String) As Long
-    ColumnLettersToIntIndex = Range("a1:" & AB & "1").Cells.Count
+Function ColumnLetterToIntIndex(ByVal colLetterIndex As String) As Long
+    ColumnLetterToIntIndex = Range("a1:" & colLetterIndex & "1").Cells.Count
 End Function
 
 
@@ -129,6 +97,9 @@ Range获取子Range
 Range to Array
 TODO按某range的几个列号（绝对，相对）组成新数组
 CreateArrayFromRange
+
+
+
 
 Range格式
 画边框
@@ -272,7 +243,7 @@ End Sub
 'Range必须为连续区域
 Sub SetRangeColumnFormat(ByVal rng As Range, ByVal colIndexType As RangeColumnIndexType, _
 ByVal strColIndexChain As String, ByVal strFormat As String)
-    '判断rng是否连续区域,只接受不接收range(A1:G100)这种地址，不接收range("A1:D100,D1:G100")这种参数。虽然实际上也是连续区域，但是算作两个area，获取地址的话也是获取到两个区域的地址。
+    '判断rng是否连续区域,只接受range(A1:G100)这种地址，不接收range("A1:D100,D1:G100")这种参数。虽然实际上也是连续区域，但是算作两个area，获取地址的话也是获取到两个区域的地址。
     If rng.Areas.Count > 1 Then
         Stop
         End
@@ -611,10 +582,11 @@ Function Get2DArrayColumnCount(ByVal theArray As Variant)
 Get2DArrayColumnCount = UBound(theArray, 2) - LBound(theArray, 2) + 1
 End Function
 
-’数组元素个数
-
+TODO’二维数组元素个数
 
 TODO 是否为空
+
+
 判断二维数组的下限BaseNum是否一致
 Function ifRowColBaseNumTheSame(ByVal arr As Variant) As Boolean
     If IsArray(arr) = False Then
@@ -679,6 +651,14 @@ Function Get2DArrayUboundByNewBaseNum(ByVal arr As Variant, ByVal newBaseNum As 
     Get2DArraySizeByNewBaseNum = Array(UBound(arr, 1) + newBaseRowIndexOffset, UBound(arr, 2) + newBaseColIndexOffset)
 End Function 
 
+计算按count个数index坐标系来表示index的话，转换到BaseNum为开始的坐标系index是多少
+Function GetBaseNumTypeIndexFromCountTypeIndex(ByVal baseNum As Long, ByVal countTypeIndex As Long)
+    GetBaseNumTypeIndexFromCountTypeIndex = baseNum - 1 + countTypeIndex
+End Function
+计算BaseNum为开始的坐标系index 的话，转换到按count个数index坐标系来表示index是多少
+Function GetCountTypeIndexFromBaseNumTypeIndex(ByVal baseNum As Long, ByVal baseNumTypeIndex As Long)
+    GetCountTypeIndexFromBaseNumTypeIndex = baseNumTypeIndex - baseNum + 1
+End Function
 
 
 计算数组维度
@@ -700,6 +680,7 @@ FinalDimension:
 nDim = dimnum - 1
 
 End Function
+
 
 复制
 复制一个一模一样的数组
@@ -772,6 +753,11 @@ Function CreateEmptyArray(ByVal rowCount As Long, ByVal colCount As Long, Option
     CreateEmptyArray = resultArr
 End Function
 
+生成新数组，某些列来源于另一个数组（行数一致）
+
+生成新数组，某些列来源于另外多个数组（涉及到多个数组行数是否要求一致，不一致是否按最大行数数组来创建）
+
+
 扩
 生成一个比原来数组增加空行列的数组（考虑要不要搞一个新fields参数）
 上下左右（中间），增加N行或列。输出结果数组的下限BaseNum和原数组一致。如果想要下标从1开始的数组，可以用自定义的ArrayResetBaseNum函数改变BaseNum。
@@ -823,31 +809,360 @@ Function CreateaExpandArray(ByVal arr As Variant, ByVal addTopCount As Long, ByV
 End Function
 
 TODO数组辅助列
-TODO 生成一列等差数列单列二维数组，参数带不带Field
-CreateSingleColumnArrOfIndexNum(startNum,rowCount,stepNum,optional fieldStr)
+生成一列步进为1的等差数列单列二维数组，参数带不带Field
+Function CreateSingleColumnArrOfRowIndexNum(ByVal baseNum As Long, ByVal startRowIndexNum As Long, ByVal rowCount As Long, ByVal needField As Boolean, Optional fieldStr As String)
+    Dim fieldLineCount As Long
+    fieldLineCount = 1
+    If IsMissing(fieldStr) Then
+    fieldStr = ""
+    End If
+    arrLineCount = rowCount + IIf(needField, fieldLineCount, 0)
+    Dim resultArr() As Variant
+    ReDim resultArr(baseNum To baseNum + arrLineCount - 1, baseNum To baseNum)
+    For i = LBound(resultArr) To UBound(resultArr)
+        If needField And (i - LBound(resultArr) < fieldLineCount) Then
+         GoTo NEXT_I
+        End If
+        resultArr(i, baseNum) = startRowIndexNum
+        startRowIndexNum = startRowIndexNum + 1
+NEXT_I:
+    Next i
+    If needField And IsMissing(fieldStr) = False Then
+        resultArr(baseNum, baseNum) = fieldStr
+    End If
+    CreateSingleColumnArrOfRowIndexNum = resultArr
+End Function
+TODO 为某二维数组生成一列等差数列单列二维数组，参数带不带Field
+
+TODO 为某二维数组增加一列等差数列单列二维数组，参数带不带Field
+
 TODO给数组加一列Field和填充行号，行号来自数组的baseNum开始的行号（看数组有没有Field），
-ArrayAdd
+
+数组添加Field行（一行）
+Function ArrayAddField(ByVal arr As Variant, ByVal fieldArr As Variant) As Variant
+    If IsArray(arr) = False Then
+        '检测到非数组参数
+        Stop
+        End
+    End If
+    If IsArray(fieldArr) = False Then
+        '检测到非数组参数
+        Stop
+        End
+    End If
+    arrDimention = nDim(arr)
+    '一维
+    If arrDimention = 1 Then
+        '提示先用函数转换为二维
+        Stop
+        End
+    End If
+    'fieldArr可以为一维也可以为只有一行的二维数组
+    Dim fieldLineCount As Long
+    fieldLineCount = 1
+    
+    If nDim(fieldArr) = 1 Then
+        fieldArr = Arr1DTo2D(fieldArr)
+    ElseIf nDim(fieldArr) = 2 Then
+        If (UBound(fieldArr, 1) - LBound(fieldArr, 1) + 1) > 1 Then
+            '异常：fieldArr二维数组的行数超过1
+            End
+        End If
+    Else
+        '异常：fieldArr最多二维
+        Stop
+        End
+    End If
+    '新建结果数组
+    Dim resultArr() As Variant
+    arrRowCount = UBound(arr, 1) - LBound(arr, 1) + 1
+    arrColCount = UBound(arr, 2) - LBound(arr, 2) + 1
+    '检查field的列数与arr是否相等
+    fieldArrColCount = UBound(fieldArr, 2) - LBound(fieldArr, 2) + 1
+    If fieldArrColCount > arrColCount Then
+    '异常：发现fieldArr列数比arr多
+        Stop
+        End
+    ElseIf fieldArrColCount < arrColCount Then
+    '异常：发现fieldArr列数比arr少
+        Stop
+        End
+    End If
+    arrLb1 = LBound(arr, 1)
+    arrLb2 = LBound(arr, 2)
+    arrUb1 = UBound(arr, 1)
+    arrUb2 = UBound(arr, 2)
+    ReDim resultArr(arrLb1 To arrUb1 + 1, arrLb2 To arrUb2)
+    Delta = arrLb2 - LBound(fieldArr, 2)
+    '写入field
+    For c = arrLb2 To arrUb2
+        resultArr(LBound(resultArr, 2), c) = fieldArr(LBound(fieldArr, 1), c - Delta)
+    Next c
+    '写入原数组数据
+    For i = arrLb1 + fieldLineCount To UBound(resultArr, 1)
+        For j = arrLb2 To arrUb2
+            resultArr(i, j) = arr(i - fieldLineCount, j)
+        Next j
+    Next i
+    ArrayAddField = resultArr
+End Function
+
 TODO缩
 TODO定位
-TODOTODO 一维数组定位元素
+TODOTODO 一维数组定位元素，返回countindex还是boundindex
 indexOf
 
 TODO删除
 TODO删除顶部前N行
+Function Delete2DArrayTopNumRowsByCount(ByVal arr As Variant, ByVal topRowsCount As Long) As Variant
+    '判断arr是不是数组
+    If Not IsArray(arr) Then
+    'arr不是数组
+        Stop
+        End
+    End If
+    'TODO
+    '判断arr维度
+    If nDim(arr) <> 2 Then
+        'arr维数不是2
+        Stop
+        End
+    End If
+    arr_rowCount = UBound(arr, 1) - LBound(arr, 1) + 1
+    arr_colCount = UBound(arr, 2) - LBound(arr, 2) + 1
+    If topRowsCount > arr_rowCount Then
+    '异常：参数超过数组行数
+        Stop
+        End
+    ElseIf topRowsCount = arr_rowCount Then
+        Delete2DArrayTopNumRowsByCount = Empty
+        Exit Function
+    End If
+    Dim resultArr() As Variant
+    ReDim resultArr(LBound(arr, 1) To UBound(arr, 1) - topRowsCount, LBound(arr, 2) To UBound(arr, 2))
+    
+    For i = LBound(arr, 1) + topRowsCount To UBound(arr, 1)
+        For j = LBound(arr, 2) To UBound(arr, 2)
+            resultArr(i - topRowsCount, j) = arr(i, j)
+        Next j
+    Next i
+    Delete2DArrayTopNumRowsByCount = resultArr
+End Function
 
-TODO清空
-TODO清空某列
+
+
+TODO清空（设置为Empty还是字符串””）
+清空二维数组某列
+Function Clear2DArrayByColumnIndex(ByVal arr As Variant, ByVal indexType As ArrayIndexType, ByVal col As Long) As Variant
+    If IsArray(arr) = False Then
+        '检测到非数组参数
+        Stop
+        End
+    End If
+    arrDimention = nDim(arr)
+    If arrDimention <> 2 Then
+        '异常：数组不是二维数组
+        Stop
+        End
+    End If
+    Dim natureBaseColIndex As Long
+    If indexType = ArrayIndexType_ArrayOriginBaseIndex Then
+        natureBaseColIndex = col
+    ElseIf indexType = ArrayIndexType_BaseOneIndex Then
+        natureBaseColIndex = LBound(arr) - 1 + col
+    Else
+        '异常：indexType取值不在枚举范围内
+        Stop
+        End
+    End If
+    
+    For i = LBound(arr) To UBound(arr)
+        arr(i, natureBaseColIndex) = Empty
+    Next i
+    Clear2DArrayByColumnIndex= arr
+End Function
+
 TODO清空某些列
-TODO清空某行
+清空countType列
+Function Clear2DArrayMultiColumnByBaseOneColIndexArr(ByVal arr As Variant, ByVal countTypeColIndexArr As Variant)
+    If IsArray(arr) = False Or IsArray(countTypeColIndexArr) = False Then
+        '检测到非数组参数
+        Stop
+        End
+    End If
+    arrDimention = nDim(arr)
+    If arrDimention <> 2 Then
+        '异常：数组不是二维数组
+        Stop
+        End
+    End If
+    For i = LBound(arr) To UBound(arr)
+        For Each countTypeIndex In countTypeColIndexArr
+            If IsNumeric(countTypeIndex) = False Then
+            '异常：countTypeIndex检测到非数字类型
+                Stop
+                End
+            End If
+            tmpCol = LBound(arr, 2) - 1 + countTypeIndex
+            arr(i, tmpCol) = Empty
+        Next countTypeIndex
+    Next i
+    Clear2DArrayMultiColumnByBaseOneColIndexArr= arr
+End Function
+
+'清空originBaseCol列（配合field-col字典使用）
+Function Clear2DArrayMultiColumnByOriginBaseColIndexArr(ByVal arr As Variant, ByVal originBaseColIndexArr As Variant)
+    If IsArray(arr) = False Or IsArray(originBaseColIndexArr) = False Then
+        '检测到非数组参数
+        Stop
+        End
+    End If
+    arrDimention = nDim(arr)
+    If arrDimention <> 2 Then
+        '异常：数组不是二维数组
+        Stop
+        End
+    End If
+    For i = LBound(arr) To UBound(arr)
+        For Each originBaseTypeIndex In originBaseColIndexArr
+            If IsNumeric(originBaseTypeIndex) = False Then
+            '异常：originBaseTypeIndex检测到非数字类型
+                Stop
+                End
+            End If
+            'tmpCol = LBound(arr, 2) - 1 + originBaseTypeIndex
+            arr(i, originBaseTypeIndex) = Empty
+        Next originBaseTypeIndex
+    Next i
+    Clear2DArrayMultiColumnByOriginBaseColIndexArr = arr
+End Function
+
+
+清空某行
+Function Clear2DArrayRowByRowIndex(ByVal arr As Variant, ByVal indexType As ArrayIndexType, ByVal rowIndex As Long) As Variant
+    If IsArray(arr) = False Then
+        '检测到非数组参数
+        Stop
+        End
+    End If
+    arrDimention = nDim(arr)
+    If arrDimention <> 2 Then
+        '异常：数组不是二维数组
+        Stop
+        End
+    End If
+    Dim natureBaseColIndex As Long
+    If indexType = ArrayIndexType_ArrayOriginBaseIndex Then
+        natureBaseRowIndex = rowIndex
+    ElseIf indexType = ArrayIndexType_BaseOneIndex Then
+        natureBaseRowIndex = LBound(arr, 2) - 1 + rowIndex
+    Else
+        '异常：indexType取值不在枚举范围内
+        Stop
+        End
+    End If
+    
+    For i = LBound(arr, 2) To UBound(arr, 2)
+        arr(natureBaseRowIndex, i) = Empty
+    Next i
+    Clear2DArrayRowByRowIndex = arr
+End Function
+
+清空base为1的数组的某行
+Function Clear2DArrayRowByBaseOneRowIndex(ByVal arr As Variant, ByVal rowIndex As Long) As Variant
+    Clear2DArrayRowByBaseOneRowIndex = Clear2DArrayRowByRowIndex(arr, ArrayIndexType_BaseOneIndex, rowIndex)
+End Function
+
 TODO清空某些行
-TODO清空顶部前N行
+清空base为1的数组的某些行
+Function Clear2DArrayMultiRowByBaseOneRowIndexArr(ByVal arr As Variant, ByVal countTypeRowIndexArr As Variant) As Variant
+    If IsArray(arr) = False Or IsArray(countTypeRowIndexArr) = False Then
+        '检测到非数组参数
+        Stop
+        End
+    End If
+    arrDimention = nDim(arr)
+    If arrDimention <> 2 Then
+        '异常：数组不是二维数组
+        Stop
+        End
+    End If
+    For c = LBound(arr, 2) To UBound(arr, 2)
+        For Each countTypeIndex In countTypeRowIndexArr
+            If IsNumeric(countTypeIndex) = False Then
+            '异常：countTypeIndex检测到非数字类型
+                Stop
+                End
+            End If
+            tmpRow = LBound(arr, 2) - 1 + countTypeIndex
+            arr(tmpRow, c) = Empty
+        Next countTypeIndex
+    Next c
+    Clear2DArrayMultiRowByBaseOneRowIndexArr = arr
+End Function
+
+
+
+清空顶部前N行
+Function Clear2DArrayTopRowsDataByCount(ByVal arr As Variant, ByVal topRowsCount As Long) As Variant
+    Dim numArr() As Long
+    For i = 1 To topRowsCount
+        ReDim Preserve numArr(1 To i)
+        numArr(i) = i
+    Next i
+    Clear2DArrayTopRowsDataByCount = Clear2DArrayMultiRowByBaseOneRowIndexArr(arr, numArr)
+End Function
+
+
 
 TODO切割
 TODO截取
+TODO取连续的几列
+TODO取不连续的几列
+
+TODO取连续的几行
+TODO取不连续的几行
+
+
+
 
 TODO去掉或截取最后几行，几列
-TODO取整列或整行
-GetArrayEntireColumnData()
+
+
+取整列或整行
+取整列
+Function Get2DArrayDataBySingleColumnIndex(ByVal arr As Variant, ByVal baseOneColIndex As Long) As Variant
+Get2DArrayDataBySingleColumnIndex = Application.WorksheetFunction.Index(arr, 0, baseOneColIndex)
+End Function
+取整行
+Function Get2DArrayDataBySingleRowIndex(ByVal arr As Variant, ByVal baseOneRowIndex As Long) As Variant
+    Get2DArrayDataBySingleRowIndex = Application.WorksheetFunction.Index(arr, baseOneRowIndex, 0)
+End Function
+
+取前几行，base不变
+Function Get2DArrayTopRowsDataByCount(ByVal arr As Variant, ByVal topRowsCount As Long, Optional offset As Long = 0) As Variant
+    rowLb = LBound(arr, 1)
+    colLb = LBound(arr, 2)
+    colUb = UBound(arr, 2)
+    
+    Dim numArr() As Long
+    For i = rowLb To topRowsCount
+        ReDim Preserve numArr(1 To i)
+        numArr(i) = i + offset
+    Next i
+    
+    Dim newArr() As Variant
+    ReDim newArr(rowLb To rowLb + topRowsCount - 1, colLb To colUb)
+    newArrRow = rowLb
+    For Each rowIndex In numArr
+        For c = colLb To colUb
+            newArr(newArrRow, c) = arr(rowIndex, c)
+        Next c
+        newArrRow = newArrRow + 1
+    Next
+    Get2DArrayTopRowsDataByCount = newArr
+End Function
+
 
 TODO调换
 统一格式
@@ -881,37 +1196,40 @@ End Function
 
 TODO二维数组转一维
 按列拼接，按行拼接
-TODO只有一行的二维转一维
-‘还没完成
-Function SingleLineArr2DTo1D(ByVal arr As Variant, Optional baseNum As Variant)
-'判断为维度
-
-If nDim(arr) <> 2 Then
-    '检测到参数非二维数组
-    Stop
-    End
-End If
-
-'判断是否是单行
-If UBound(arr, 1) <> LBound(arr, 1) Then
-    '检测到参数非单行数组
-    Stop
-    End
-End If
-
-If IsMissing(baseNum) Then
-baseNum = 0
-End If
-Dim resultArr() As Variant
-ReDim resultArr(baseNum To baseNum + UBound(arr, 2) - LBound(arr, 2))
-'数组粘贴到数组
-'/////TODO
-
-
-SingleLineArr2DTo1D = resultArr
+只有一行的二维转一维
+Function SingleLineArr2DTo1D(ByVal arr As Variant, Optional newArrbaseNum As Variant)
+    '判断为维度
+    If nDim(arr) <> 2 Then
+        '检测到参数非二维数组
+        Stop
+        End
+    End If
+    
+    '判断是否是单行
+    If UBound(arr, 1) <> LBound(arr, 1) Then
+        '检测到参数非单行数组
+        Stop
+        End
+    End If
+    
+    If IsMissing(newArrbaseNum) Then
+    newArrbaseNum = 0
+    End If
+    Dim resultArr() As Variant
+    ReDim resultArr(newArrbaseNum To newArrbaseNum + UBound(arr, 2) - LBound(arr, 2))
+    '数组粘贴到数组
+    srcArrColBaseNum = LBound(arr, 2)
+    colDelta = newArrbaseNum - srcArrColBaseNum
+    For c = srcArrColBaseNum To UBound(arr, 2)
+        resultArr(c + colDelta) = arr(1, c)
+    Next
+    SingleLineArr2DTo1D = resultArr
 End Function
 
 TODO 多行多列数组转单行单列数组
+分解数组为一维新数组， 新数组每个元素为每行单独的数组或者每列单独的数组
+arrayInEachRow
+
 向下和向右改变Array的尺寸
 ResizeArray，也就是Redim Preserve
 Function ResizeArray(ByVal arr As Variant, ByVal newRow As Long, ByVal newCol As Long)
@@ -1019,6 +1337,7 @@ End Function
 
 数组元素增减
 TODO一维数组增加元素append
+Array1DAppendItem
 TODO一维数组删除元素
 TODO一维数组删除前N个元素
 TODO一维数组删除后N个元素
@@ -1111,12 +1430,299 @@ Function ArrayVStack(ByVal arr1 As Variant, ByVal arr2 As Variant, ByVal baseNum
     ArrayVStack = resultArr
 End Function
 
-TODO 水平hstack
+水平hstack
+Function ArrayHStack(ByVal arr1 As Variant, ByVal arr2 As Variant, ByVal baseNum As Long)
+    '判断是否是数组
+    '判断数组维度
+    '一维的话要不要转为二维还是弹出提示
+      
+  '检查两个数组的行数列数各自的下限数字是否一致
+
+    '以下是二维数组的处理
+    arr1_RowCount = UBound(arr1, 1) - LBound(arr1, 1) + 1
+    arr1_ColCount = UBound(arr1, 2) - LBound(arr1, 2) + 1
+    arr2_RowCount = UBound(arr2, 1) - LBound(arr2, 1) + 1
+    arr2_ColCount = UBound(arr2, 2) - LBound(arr2, 2) + 1
+    '判断两个数组的行数是否一致，不一致退出
+    If arr1_RowCount <> arr2_RowCount Then
+        '两个数组行数不一致，程序停止
+        Stop
+        End
+    End If
+    '如果两个数组行数一致
+    Dim resultArr() As Variant
+    indexOffset = baseNum - LBound(arr1, 1)
+    ReDim resultArr(baseNum To baseNum + arr1_RowCount - 1, baseNum To baseNum + arr1_ColCount + arr2_ColCount - 1)
+    '复制arr1
+    For i = LBound(arr1, 1) To UBound(arr1, 1)
+        For j = LBound(arr1, 2) To UBound(arr1, 2)
+            resultArr(i + indexOffset, j + indexOffset) = arr1(i, j)
+        Next j
+    Next i
+    '复制arr2
+    For i = LBound(arr1, 1) To UBound(arr1, 1)
+        For j = LBound(arr2, 2) To UBound(arr2, 2)
+            resultArr(i + indexOffset, j + arr1_ColCount + indexOffset) = arr2(i, j)
+        Next j
+    Next i
+    ArrayHStack = resultArr
+End Function
 数组比较
 TODO数组元素相减（集合相减）？交集？
 匹配
+‘=========================================================
+二维或者一维的单行field向右或向左添加项目
+FieldArrAddLeft(byval fieldArr as variant,byval addArr as variant)
+FieldArrAddRight(byval fieldArr as variant,byval addArr as variant)
+Field左添加项目
+'先规定只能用一维fieldArr
+Function FieldArrAddLeft(ByVal fieldArr As Variant, ByVal addArr As Variant)
+    If IsArray(fieldArr) = False Then
+        '检测到非数组参数
+        Stop
+        End
+    End If
+    If IsArray(addArr) = False Then
+        '检测到非数组参数
+        Stop
+        End
+    End If
+    arrDimention = nDim(fieldArr)
+    '一维
+    If arrDimention <> 1 Then
+        '提示先用函数转换为一维
+        Stop
+        End
+    End If
+    addArrDimention = nDim(addArr)
+    '一维
+    If addArrDimention <> 1 Then
+        '提示先用函数转换为一维
+        Stop
+        End
+    End If
+
+'    addArrRowCount = UBound(addArr, 1) - LBound(addArr, 1) + 1
+'    addArrColCount = UBound(addArr, 2) - LBound(addArr, 2) + 1
+'    fieldArrRowCount = UBound(fieldArr, 1) - LBound(fieldArr, 1) + 1
+'    fieldArrColCount = UBound(fieldArr, 2) - LBound(fieldArr, 2) + 1
+    addArrColCount = UBound(addArr) - LBound(addArr) + 1
+    fieldArrColCount = UBound(fieldArr) - LBound(fieldArr) + 1
+    Dim resultArr() As String
+    ReDim resultArr(LBound(fieldArr) To fieldArrColCount + addArrColCount - 1)
+    
+    resultArrIndex = LBound(resultArr)
+    For c = LBound(addArr) To UBound(addArr)
+        resultArr(resultArrIndex) = addArr(c)
+        resultArrIndex = resultArrIndex + 1
+    Next c
+    For c = LBound(fieldArr) To UBound(fieldArr)
+        resultArr(resultArrIndex) = fieldArr(c)
+        resultArrIndex = resultArrIndex + 1
+    Next c
+    
+  FieldArrAddLeft = resultArr
+End Function
+Field右添加项目
+'先规定只能用一维fieldArr
+Function FieldArrAddRight(ByVal fieldArr As Variant, ByVal addArr As Variant)
+    If IsArray(fieldArr) = False Then
+        '检测到非数组参数
+        Stop
+        End
+    End If
+    If IsArray(addArr) = False Then
+        '检测到非数组参数
+        Stop
+        End
+    End If
+    arrDimention = nDim(fieldArr)
+    '一维
+    If arrDimention <> 1 Then
+        '提示先用函数转换为一维
+        Stop
+        End
+    End If
+    addArrDimention = nDim(addArr)
+    '一维
+    If addArrDimention <> 1 Then
+        '提示先用函数转换为一维
+        Stop
+        End
+    End If
+'    addArrRowCount = UBound(addArr, 1) - LBound(addArr, 1) + 1
+'    addArrColCount = UBound(addArr, 2) - LBound(addArr, 2) + 1
+'    fieldArrRowCount = UBound(fieldArr, 1) - LBound(fieldArr, 1) + 1
+'    fieldArrColCount = UBound(fieldArr, 2) - LBound(fieldArr, 2) + 1
+    addArrColCount = UBound(addArr) - LBound(addArr) + 1
+    fieldArrColCount = UBound(fieldArr) - LBound(fieldArr) + 1
+    Dim resultArr() As String
+    ReDim resultArr(LBound(fieldArr) To fieldArrColCount + addArrColCount - 1)
+    
+    resultArrIndex = LBound(resultArr)
+
+    For c = LBound(fieldArr) To UBound(fieldArr)
+        resultArr(resultArrIndex) = fieldArr(c)
+        resultArrIndex = resultArrIndex + 1
+    Next c
+    For c = LBound(addArr) To UBound(addArr)
+        resultArr(resultArrIndex) = addArr(c)
+        resultArrIndex = resultArrIndex + 1
+    Next c
+    
+  FieldArrAddRight = resultArr
+End Function
+
+
+
+数组额外加一个field，生成diceachrow版本，给定key或者按rowindex
+
+生成一个对应的field和col的字典。不用管arr的列base是什么，用于直接用fieldname在数组取数。
+Array自身无field
+dicFieldCol=GetDicFieldColIndexOfArrayByFieldArray(arr,一维field或二维field单行)
+dataArr(row,dicFieldCol(“field name”))
+Function GetDicFieldColIndexOfArrayByFieldArray(ByVal arr As Variant, ByVal fieldArr As Variant) As Variant
+    If IsArray(arr) = False Then
+        '检测到非数组参数
+        Stop
+        End
+    End If
+    If IsArray(fieldArr) = False Then
+        '检测到非数组参数
+        Stop
+        End
+    End If
+    arrDimention = nDim(arr)
+    '一维
+    If arrDimention = 1 Then
+        '提示先用函数转换为二维
+        Stop
+        End
+    End If
+    'fieldArr可以为一维也可以为只有一行的二维数组
+'    Dim fieldLineCount As Long
+'    fieldLineCount = 1
+    
+    If nDim(fieldArr) = 1 Then
+        fieldArr = Arr1DTo2D(fieldArr)
+    ElseIf nDim(fieldArr) = 2 Then
+        If (UBound(fieldArr, 1) - LBound(fieldArr, 1) + 1) > 1 Then
+            '异常：fieldArr二维数组的行数超过1
+            End
+        End If
+    Else
+        '异常：fieldArr最多二维
+        Stop
+        End
+    End If
+
+    arrRowCount = UBound(arr, 1) - LBound(arr, 1) + 1
+    arrColCount = UBound(arr, 2) - LBound(arr, 2) + 1
+    '检查field的列数与arr是否相等
+    fieldArrColCount = UBound(fieldArr, 2) - LBound(fieldArr, 2) + 1
+    If fieldArrColCount > arrColCount Then
+    '异常：发现fieldArr列数比arr多
+        Stop
+        End
+    ElseIf fieldArrColCount < arrColCount Then
+    '异常：发现fieldArr列数比arr少
+        Stop
+        End
+    End If
+    arrLb1 = LBound(arr, 1)
+    arrLb2 = LBound(arr, 2)
+    arrUb1 = UBound(arr, 1)
+    arrUb2 = UBound(arr, 2)
+    
+     Delta = arrLb2 - LBound(fieldArr, 2)
+     Dim dic_field_col
+     Set dic_field_col = CreateObject("scripting.dictionary")
+    '写入field
+    For c = arrLb2 To arrUb2
+        If TypeName(fieldArr(LBound(fieldArr, 1), c - Delta)) <> "String" Then
+        '异常：fieldArr存在非字符串元素
+            Stop
+            End
+        End If
+        dic_field_col.Add fieldArr(LBound(fieldArr, 1), c - Delta), c
+    Next c
+    Set GetDicFieldColIndexOfArrayByFieldArray = dic_field_col
+End Function
+
+
+Array自身带一行field
+
+Array自身无Field，生成按行base1开始的字典每行，或者数组每行
+
+Array自身无Field，按给定的Field和新数组的field顺序，生成新数组，新数组的列数可能比array多
+(可结合获取field_col字典来获得多个列号)
+‘=========================================================
+
+
+
+从Field数组获取Field Title和Colindex的字典（实际用途不大，作废）
+'arrField为一维数组
+Function Dic_GetColIndexByFieldArray(ByVal arrField, Optional matchCase As Boolean = False, Optional colStartIndex As Long = 1)
+    If IsArray(arrField) = False Then
+        Stop
+        End
+    End If
+    '检查arrField维数
+    If nDim(arrField) <> 1 Then
+        Stop
+        End
+    End If
+    '检查是否都是字符串
+    For Each subEle In arrField
+        If TypeName(subEle) <> "String" Then
+            Stop
+            End
+        End If
+    Next subEle
+    '检查arrField是否有重复值
+    Dim d As Dictionary
+    Set d = CreateObject("scripting.dictionary")
+    If matchCase Then
+        d.CompareMode = BinaryCompare
+    Else
+        d.CompareMode = TextCompare
+    End If
+    For Each subEle In arrField
+        d.Add subEle, colStartIndex
+        colStartIndex = colStartIndex + 1
+    Next subEle
+    Set Dic_GetColIndexByFieldArray = d
+End Function
+
+
+生成以真实sheet行号为key或从1开始的index为key的单行数组的字典或each_row字典的字典
+
+单行eachRow字典转数组，带不带Field
+不带Field直接获取字典items
+
+字典行号式，多行eachRow字典转数组，返回带不带field
+数组，eachrow式
+
+
+（包不包含field）数组转多行eachrow字典，以某列（列号）为key或者从1开始的index为key
+
+Field和Col字典的示例代码
+'Field from array
+arrField = Array("fieldname1", "fieldname2", "fieldname3")
+'field  from range
+'arrField =range("a1:d1").value
+'Get FieldName:ColIndex  Dictionary
+Set dicFieldArrCol = Dic_GetColIndexByFieldArray(arrField)
+arrData = Range("a2:c5").Value  'get range value array
+theVar = arrData(1, dicFieldArrCol.Item("fieldname1"))
+
 
 TODO Svlookup_Array
+
+
+【#重要#】TODO 数组A  key列（1,2,3），数组B key列（4,5,7），填入数组A的value列（5，6），来自数组B的value列（9,10）
+
+
 
 
 TODO提供一个数组A，选定某列作为key，选择另一个区域或数组B，选定列作为key，选择B的某列填充到数组A
@@ -1162,47 +1768,170 @@ TODO判断和修改
 判断多列
 判断全部
 
+
+
 TODO统计
 1.临时表里sql统计
 2.常见统计：
 按列，按行，按整个区域
+
+
 最大，最小
-Function ArrayMax(ByVal arr As Variant, ByVal autoConvertNumStrToInt As Boolean)
+一维二维数组里最大数，输入数组，返回原数值或数值化后的数字字符串
+'空字符串不合格
+Function ArrayMax(ByVal arr As Variant, ByVal regardNumStrAsVal As Boolean, ByVal autoConvertResultNumStrToVal As Boolean)
+    Dim maxNum As Variant
+    Dim maxEleVar As Variant
     
-    maxNum = 0
+    'todo 可能要先检查下是否有空字符串
     If IsArray(arr) = False Then
         '检测到非数组参数
         Stop
-    End
+        End
+    End If
     '判断数组是否为空
-    
-    
+    Dim ele As Variant
+    Dim eleVar As Variant
     If nDim(arr) = 1 Then
-        
         For i = LBound(arr) To UBound(arr)
+
+            eleNum = NumberToVal(arr(i))
+            eleVar = arr(i)
+            If (Not IsNumeric(eleVar)) Or (IsNumeric(eleVar) And TypeName(eleVar) = "String" And Not regardNumStrAsVal) Then
+                '检测到数组有非数字元素
+                Stop
+                End
+            End If
             If i = LBound(arr) Then
-                maxNum = arr(i)
+                maxNum = eleNum
+                maxEleVar = eleVar
             Else
-                If maxNum < arr(i) Then
-                    maxNum = arr(i)
+                If maxNum < eleNum Then
+                    maxNum = eleNum
+                    maxEleVar = eleVar
                 End If
             End If
-            
         Next i
     ElseIf nDim(arr) = 2 Then
-        
+        For i = LBound(arr, 1) To UBound(arr, 1)
+            For j = LBound(arr, 2) To UBound(arr, 2)
+            eleNum = NumberToVal(arr(i, j))
+            eleVar = arr(i, j)
+            If (Not IsNumeric(eleVar)) Or (IsNumeric(eleVar) And TypeName(eleVar) = "String" And Not regardNumStrAsVal) Then
+                '检测到数组有非数字元素
+                Stop
+                End
+            End If
+            If i = LBound(arr, 1) And j = LBound(arr, 2) Then
+                maxNum = eleNum
+                maxEleVar = eleVar
+            Else
+                If maxNum < eleNum Then
+                    maxNum = eleNum
+                    maxEleVar = eleVar
+                End If
+            End If
+            Next j
+        Next i
+
     Else
             '检测到n>2维数组,本函数不支持大于二维的数组
         Stop
         End
     End If
     
+    If autoConvertResultNumStrToVal Then
+        ArrayMax = maxNum
+    Else
+        ArrayMax = maxEleVar
+    End If
+End Function
 
+一维二维数组里最小数，输入数组，返回原数值或数值化后的数字字符串
+'空字符串不合格
+Function ArrayMin(ByVal arr As Variant, ByVal regardNumStrAsVal As Boolean, ByVal autoConvertResultNumStrToVal As Boolean)
+    Dim minNum As Variant
+    Dim minEleVar As Variant
+    
+    'todo 可能要先检查下是否有空字符串
+    If IsArray(arr) = False Then
+        '检测到非数组参数
+        Stop
+        End
+    End If
+    '判断数组是否为空
+    Dim ele As Variant
+    Dim eleVar As Variant
+    If nDim(arr) = 1 Then
+        For i = LBound(arr) To UBound(arr)
+
+            eleNum = NumberToVal(arr(i))
+            eleVar = arr(i)
+            If (Not IsNumeric(eleVar)) Or (IsNumeric(eleVar) And TypeName(eleVar) = "String" And Not regardNumStrAsVal) Then
+                '检测到数组有非数字元素
+                Stop
+                End
+            End If
+            If i = LBound(arr) Then
+                minNum = eleNum
+                minEleVar = eleVar
+            Else
+                If minNum < eleNum Then
+                    minNum = eleNum
+                    minEleVar = eleVar
+                End If
+            End If
+        Next i
+    ElseIf nDim(arr) = 2 Then
+        For i = LBound(arr, 1) To UBound(arr, 1)
+            For j = LBound(arr, 2) To UBound(arr, 2)
+            eleNum = NumberToVal(arr(i, j))
+            eleVar = arr(i, j)
+            If (Not IsNumeric(eleVar)) Or (IsNumeric(eleVar) And TypeName(eleVar) = "String" And Not regardNumStrAsVal) Then
+                '检测到数组有非数字元素
+                Stop
+                End
+            End If
+            If i = LBound(arr, 1) And j = LBound(arr, 2) Then
+                minNum = eleNum
+                minEleVar = eleVar
+            Else
+                If minNum < eleNum Then
+                    minNum = eleNum
+                    minEleVar = eleVar
+                End If
+            End If
+            Next j
+        Next i
+
+    Else
+            '检测到n>2维数组,本函数不支持大于二维的数组
+        Stop
+        End
+    End If
+    
+    If autoConvertResultNumStrToVal Then
+        ArrayMin = minNum
+    Else
+        ArrayMin = minEleVar
+    End If
 End Function
 
 取唯一：
 接受数组类型：一维数组，只有一行的二维数组，只有一列的二维数组，多行多列的二维数组指定某行或某列
 参数要求：compare模式，二进制（如数字字符串和数字比较），字符串比较（大小写）
+
+
+判断二维数组是否唯一
+
+判断单行Filed Array是否唯一（接受一维二维）
+
+
+判断单列是否唯一
+
+
+检查并返回重复的项目以及重复次数
+
 
 TODO数组一对多查找，数组一对多展开，填充纵向
 
@@ -1251,7 +1980,7 @@ Function PasteArrayAtCell(ByVal arr As Variant, ByVal cel As Range) As Variant '
 End Function
 TODO 数组粘贴到range的左上角第一个单元格
 
-TODO 区域先设定格式再粘贴数组 pasteArrOnRangeWithFormat(range,arr,formatArray)
+TODO 区域先设定格式再粘贴数组 pasteArrOnRangeWithFormat(range,arr,colChain_format_Dic)
 
 集合与数组
 TODO集合转换到数组CollectionToArray
@@ -1309,7 +2038,57 @@ Function StrWithSepAddItemStr(ByVal addStr As String, ByVal totalStr As String, 
 End Function
 Sheet
 
+某列最大行号
+Function GetShtLastRowIndexByCol(ByVal sht As Worksheet, ByVal col As Variant) As Long
+    If (TypeName(col) = "String" Or IsNumeric(col)) = False Then
+    'col非字符串或者数字则异常
+        Stop
+        End
+    End If
+    GetShtLastRowIndexByCol= sht.Cells(Rows.Count, col).End(3).row
+End Function
 
+TODO多列范围的最大行号
+
+UsedRange的最大行号（已测速，遍历所有列号，速度ok）
+Function GetShtLastRowIndexInUsedRange(ByVal sht As Worksheet) As Long
+    Dim maxRow As Long
+    maxRow = 0
+    For c = 1 To sht.UsedRange.Columns.Count
+        tmpRow = sht.Cells(Rows.Count, c).End(3).row
+        If maxRow < tmpRow Then
+             maxRow = tmpRow
+        End If
+    Next c
+    GetLastRowIndexInUsedRange= maxRow
+End Function
+
+某行最大数字列号
+Function GetShtLastColNumIndexByRow(ByVal sht As Worksheet, ByVal rowIndex As Long) As Long
+    GetShtLastColNumIndexByRow = sht.Cells(rowIndex, Columns.Count).End(xlToLeft).Column
+End Function
+某行最大字母列号
+Function GetShtLastColLetterIndexByRow(ByVal sht As Worksheet, ByVal rowIndex As Long) As String
+    colNumIndex = sht.Cells(rowIndex, Columns.Count).End(xlToLeft).Column
+    GetShtLastColLetterIndexByRow = Replace(Cells(1, colNumIndex).Address(False, False), "1", "")
+End Function
+UsedRange的最大数字列号（已测速，如果一百万行需要遍历，费时大概9秒左右）
+Function GetShtLastColNumIndexInUsedRange(ByVal sht As Worksheet) As Long
+    Dim maxCol As Long
+    maxCol = 0
+    For r = 1 To sht.UsedRange.Rows.Count
+        tmpCol = sht.Cells(r, Columns.Count).End(xlToLeft).Column
+        If maxCol < tmpCol Then
+             maxCol = tmpCol
+        End If
+    Next r
+    GetShtLastColNumIndexInUsedRange = maxCol
+End Function
+UsedRange的最大字母列号
+Function GetShtLastColLetterIndexInUsedRange(ByVal sht As Worksheet) As String
+    colNumIndex = GetShtLastColNumIndexInUsedRange(sht)
+    GetShtLastColLetterIndexInUsedRange = Replace(Cells(1, colNumIndex).Address(False, False), "1", "")
+End Function
 
 
 其他
