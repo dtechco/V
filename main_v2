@@ -1,41 +1,50 @@
-
-# 一、检查
-检查工作表常用：  
-
-检查表头  
-设定该表是否应该有表头，表头在第几行  
-    - 有  
-    - 没有  
-    
-1. 检查固定行的固定范围的表头是否符合原先设定的，如果不符合，返回现有的和原来应该有的差异。  
-- 有没有  
-有，在不在应该的位置上  
-没有  
-- 有没有多出的，多出的分别在哪列（如果是数组对比，那么就是序号）（如果是range和数组对比，那么就是序号或者列号）  
-检查单组数组的情况  
-
-
- 
-2. 检查两组数据的差异：
-- 组成
-    - 把两组数据弄成可以对比的格式 （数组） 
-    - 设定元素比较的mode  
-    - 数组A是否重复，数组B是否重复  
-    -  
-    - 数组A不重复的元素个数，数组B不重复的元素个数  
-    - 数组A包含重复的元素个数，数组B包含重复的元素个数
-    - 不去重的数组A对比不去重的数组B：
-        - 多出哪些
-        - 少哪些
-        - 是否相等
-    - 去重的数组A对比不去重的数组B：
-        - 多出哪些
-        - 少哪些
-        - 是否相等
-- 顺序
-    - aa
-
-
+查找	2
+定位	2
+Range	2
+Range to Array	2
+按某range的几个列号（绝对，相对）组成新数组	2
+ADO	2
+Array	3
+基本属性	3
+判断二维数组的下限BaseNum是否一致	3
+函数内部常用：检查参数是否为空数组和是否为二维数组	3
+调整二维数组的下限BaseNum为一致	3
+数组维度	4
+复制	4
+复制一个一模一样的数组	4
+TODO 生成一个相同行列的空数组	6
+生成空数组	6
+扩	6
+缩	6
+定位	6
+删除	6
+清空	6
+取整列或整行	6
+调换	6
+其他变形	6
+二维数组转一维	6
+多行多列数组转单行单列数组	6
+转换成其他基本数据类型（如集合字典等等）	6
+Arr与Arr	8
+让有数据的数组像粘贴到range左上角第一个单元格一样粘贴到另一个数组里（考虑不考虑边界自动扩充的问题）	8
+数组比较	9
+数组元素相减（集合相减）？交集？	9
+场景：	9
+匹配In	9
+匹配Out	9
+按行处理：	9
+按多行处理：	9
+按列处理：	9
+对数组某列进行lcase 和ucase设置	9
+按多列处理：	9
+对所有元素进行处理：	9
+对数组所有元素进行lcase和ucase设置	9
+统计	9
+DataFrame结构	10
+Array To Range	10
+集合	10
+基本属性	10
+集合对比	10
 
 
 
@@ -96,7 +105,7 @@ Enum
 Array行列号
 Public Enum ArrayIndexType
 ArrayIndexType_BaseOneIndex = 1
-ArrayIndexType_ArrayOriginBaseIndex = 2
+ArrayIndexType_OriginBaseIndex = 2
 End Enum
 Enum
 相对列号模式（1开始）
@@ -1007,7 +1016,7 @@ Function Clear2DArrayByColumnIndex(ByVal arr As Variant, ByVal indexType As Arra
         End
     End If
     Dim natureBaseColIndex As Long
-    If indexType = ArrayIndexType_ArrayOriginBaseIndex Then
+    If indexType = ArrayIndexType_OriginBaseIndex Then
         natureBaseColIndex = col
     ElseIf indexType = ArrayIndexType_BaseOneIndex Then
         natureBaseColIndex = LBound(arr) - 1 + col
@@ -1093,7 +1102,7 @@ Function Clear2DArrayRowByRowIndex(ByVal arr As Variant, ByVal indexType As Arra
         End
     End If
     Dim natureBaseColIndex As Long
-    If indexType = ArrayIndexType_ArrayOriginBaseIndex Then
+    If indexType = ArrayIndexType_OriginBaseIndex Then
         natureBaseRowIndex = rowIndex
     ElseIf indexType = ArrayIndexType_BaseOneIndex Then
         natureBaseRowIndex = LBound(arr, 2) - 1 + rowIndex
