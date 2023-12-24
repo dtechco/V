@@ -1,0 +1,101 @@
+'''
+某个sql解析网站
+https://sql-app.infocruncher.com/
+
+'''
+
+
+
+'''
+Flet库的地址
+https://flet.dev/
+
+github
+https://github.com/flet-dev/flet
+
+'''
+import flet
+from flet import Page, Checkbox, ElevatedButton, Row, TextField
+
+
+# ******************
+
+from sql_metadata.parser import Parser
+
+
+# **********************
+def main(page: Page):
+
+    try:
+        page.title="V1.0.0"
+        page.window_center()
+        page.window_width = 850  # window's width is 200 px
+        page.window_height = 400  # window's height is 200 px
+        page.window_resizable = False  # window is not resizable
+
+
+        inputTextField = TextField(label="SQL Input",hint_text="Paste SQL here", width=400,multiline=True,max_lines=10,min_lines=10,autofocus=True)
+        resultTextField = TextField(label="Result",hint_text="Here's the result", width=400, multiline=True, max_lines=10,min_lines=10)
+
+        def sqlparse(parseType):
+            resultTextField.value = ""
+            page.update()
+
+
+            resultStr=""
+            sqlStr = inputTextField.value
+            try:
+                if parseType=="table":
+                    tablesArr = Parser(sqlStr).tables
+                    resultStr = "\n".join(tablesArr)
+                elif parseType=="column":
+                    columnArr = Parser(sqlStr).columns
+                    resultStr = "\n".join(columnArr)
+
+                else:
+                    pass
+
+                resultTextField.value = resultStr
+                page.update()
+            except:
+                dlg = flet.AlertDialog(
+                    title=flet.Text("Not supported query type"), on_dismiss=lambda e: print("Dialog dismissed!")
+                )
+
+                page.dialog = dlg
+                dlg.open = True
+                page.update()
+
+        def btn_clearup(e):
+            inputTextField.value=""
+            resultTextField.value=""
+            page.update()
+        def btn_getTableName_clicked(e):
+            sqlparse("table")
+
+        def btn_getColumnName_clicked(e):
+            sqlparse("column")
+        def btn_getPreprocessQuery_clicked(e):
+            sqlparse("preprocess_query")
+
+
+            # page.add(Checkbox(label=new_task.value))
+
+        page.add(Row([ElevatedButton("Clear up", on_click=btn_clearup),
+
+                      ElevatedButton("Get table name", on_click=btn_getTableName_clicked),
+                      ElevatedButton("Get column name", on_click=btn_getColumnName_clicked)
+                      ]))
+
+
+        page.add(Row([inputTextField, resultTextField]))
+    except:
+        dlg = flet.AlertDialog(
+            title=flet.Text("Input is not a sql"), on_dismiss=lambda e: print("Dialog dismissed!")
+        )
+        page.dialog = dlg
+        dlg.open = True
+        page.update()
+
+
+flet.app(target=main)
