@@ -1,0 +1,105 @@
+在线解析网站
+https://sql-app.infocruncher.com/
+
+
+我需要的功能：
+读取每个空格分开的部分（Extracting raw sql-metadata tokens）
+
+获得原始表名
+获得原始表名和对应的别称，别称集合
+
+
+获得不带schema的表名
+获得不带schema的表名和对应的别称，别称集合
+
+
+如何输出每个原始表用到的原始字段名
+
+
+
+
+
+*****************************************************************
+sql_metadata库的功能
+地址：https://github.com/macbre/sql-metadata
+
+已验证：
+1.tables命令包含select部分的嵌套和其他地方多层嵌套的最根本的原始表名
+2.tables_aliases命令只会输出原始表名对应的别名，不包含中间过程as的别名，支持select和其他地方的多层嵌套
+3.columns不会自动给字段名带表名前缀，可嵌套
+4.columns_aliases，输出字典，如果别名对应的字段或嵌套语句里的字段为常数，则找不到alias包含的字段，则也不会输出该别名；中间过程（包括嵌套）的别名对应的根本字段也会输出。比如(select af as ta) as tb，则tb对应af，ta也对应af
+5.如果原语句的字段有 表名.字段名  或表别名.字段名，都会被输出位表名.字段名
+6.【带表名前缀】的字段和【不带的表名前缀】的相同字段会不会被识别为一个字段。（经过验证，结果会被识别为两个字段）
+
+
+*****************************************************************
+基于sql_metadata的能力结合实际需要的解决方案：
+1.提取表名和对应的字段：使用columns提取，如果sql里字段自带表名前缀，不管是别名前缀还是原始表名前缀，都归为A组。如果没有带表名前缀，则归为B组。
+- 对A组的表名进行整合，整理出相同表名下的所有字段名。
+- 对B组的表名，单独留出来。
+
+2.对已有的sql补齐字段前的表名
+待定，未实现
+
+3.由于可能不能解析全部的名称，所以需要有一个原sql把识别出来的表名或字段名标红的功能
+
+
+
+******************************************************************
+
+提取字段 Extracting columns from query
+提取涉及到的所有字段名（带表名前缀/不一定）（不知道带不带嵌套）（包括函数内的参数）
+parser.columns
+
+提取所有字段别称各自涉及到的所有字段的字典
+parser.columns_aliases 
+
+提取涉及到的字段别称
+parser.columns_aliases_names
+
+
+分语法部分（比如select，join），提取字段名（带表名前缀），字典
+parser.columns_dict
+
+
+分语法部分（比如select，join），提取字段别名，字典
+parser.columns_aliases_dict
+
+
+提取表名Extracting tables from query
+提取表名
+parser.tables（此用法不包含with的包名）
+
+提取别名和表名的字典（不包含子查询）
+parser.tables_aliases
+
+提取 with语句的表名
+parser.with_names
+
+
+
+提取子查询Extracting sub-queries
+
+
+
+提取注释
+SQL去掉注释
+parser.without_comments
+
+SQL提取注释数组
+parser.comments
+
+每个token可以分别判断是属于SQL什么类型的部分
+
+
+
+
+预处理preprocess_query（去除换行什么的）
+
+
+判断是什么查询类型（create ,select,drop）
+
+
+
+
+
