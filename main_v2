@@ -48,9 +48,9 @@ Array To Range	10
 
 
 最大行
-rm=.cells.find("*",.cells(.rows.count,.columns.count),,,xlByRows,xlPrevious).row
+lastRow=.cells.find("*",.cells(.rows.count,.columns.count),,,xlByRows,xlPrevious).row
 最大列
-cm=.cells.find("*",.cells(.rows.count,.columns.count),,,xlByColumns,xlPrevious).Column
+lastCol=.cells.find("*",.cells(.rows.count,.columns.count),,,xlByColumns,xlPrevious).Column
 
 
 基本数据类型
