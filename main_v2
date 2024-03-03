@@ -47,6 +47,11 @@ Array To Range	10
 集合对比	10
 
 
+最大行
+rm=.cells.find("*",.cells(.rows.count,.columns.count),,,xlByRows,xlPrevious).row
+最大列
+cm=.cells.find("*",.cells(.rows.count,.columns.count),,,xlByColumns,xlPrevious).Column
+
 
 基本数据类型
 转换数字字符串或者数值到数值
